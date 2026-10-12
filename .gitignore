@@ -1,0 +1,16 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.log
+
+# Downloaded third-party source data (re-fetch with npm run fetch-data)
+data/raw/
+
+# Raw generator output (reviewed batches get merged into src/)
+scripts/out/
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store

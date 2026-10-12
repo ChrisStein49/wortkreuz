@@ -1,0 +1,122 @@
+import type { Category } from '../../core/types.ts'
+
+// Solution-word categories. Words are uppercase A-Z: names with umlauts or
+// ß are left out entirely (no Ä -> AE spelling), matching the grid words.
+// `easy` categories have few members, so the anagram is quick to spot.
+export const CATEGORIES: readonly Category[] = [
+  {
+    id: 'country',
+    clue: 'Welches Land ist gesucht?',
+    words: [
+      'ALBANIEN', 'ALGERIEN', 'ANDORRA', 'ANGOLA', 'ARMENIEN', 'BAHRAIN', 'BARBADOS', 'BELARUS',
+      'BELGIEN', 'BELIZE', 'BENIN', 'BHUTAN', 'BOLIVIEN', 'BOTSUANA', 'BRASILIEN', 'BULGARIEN',
+      'BURUNDI', 'CHILE', 'CHINA', 'ECUADOR', 'ERITREA', 'ESTLAND', 'FIDSCHI', 'FINNLAND', 'GABUN',
+      'GAMBIA', 'GEORGIEN', 'GHANA', 'GRENADA', 'GUINEA', 'GUYANA', 'HAITI', 'INDIEN', 'IRAK',
+      'IRAN', 'IRLAND', 'ISLAND', 'ISRAEL', 'ITALIEN', 'JAMAIKA', 'JAPAN', 'JEMEN', 'JORDANIEN',
+      'KANADA', 'KATAR', 'KENIA', 'KOLUMBIEN', 'KOSOVO', 'KROATIEN', 'KUBA', 'KUWAIT', 'LAOS',
+      'LESOTHO', 'LETTLAND', 'LIBANON', 'LIBERIA', 'LIBYEN', 'LITAUEN', 'LUXEMBURG', 'MALAWI',
+      'MALAYSIA', 'MALI', 'MALTA', 'MAROKKO', 'MEXIKO', 'MOLDAU', 'MONACO', 'MONGOLEI', 'MYANMAR',
+      'NAMIBIA', 'NAURU', 'NEPAL', 'NIGER', 'NIGERIA', 'NORWEGEN', 'OMAN', 'PAKISTAN', 'PALAU',
+      'PANAMA', 'PARAGUAY', 'PERU', 'POLEN', 'PORTUGAL', 'RUANDA', 'RUSSLAND', 'SAMBIA', 'SAMOA',
+      'SCHWEDEN', 'SCHWEIZ', 'SENEGAL', 'SERBIEN', 'SIMBABWE', 'SLOWAKEI', 'SLOWENIEN', 'SOMALIA',
+      'SPANIEN', 'SUDAN', 'SURINAME', 'SYRIEN', 'TAIWAN', 'TANSANIA', 'THAILAND', 'TOGO', 'TONGA',
+      'TSCHAD', 'TUNESIEN', 'TUVALU', 'UGANDA', 'UNGARN', 'URUGUAY', 'VIETNAM', 'ZYPERN',
+    ],
+  },
+  {
+    id: 'capital',
+    clue: 'Welche Hauptstadt ist gesucht?',
+    words: [
+      'ABUJA', 'ACCRA', 'ALGIER', 'AMMAN', 'AMSTERDAM', 'ANKARA', 'ASTANA', 'ATHEN', 'BAGDAD',
+      'BAKU', 'BANGKOK', 'BEIRUT', 'BELGRAD', 'BERLIN', 'BERN', 'BOGOTA', 'BRASILIA', 'BUDAPEST',
+      'BUKAREST', 'CANBERRA', 'CARACAS', 'COLOMBO', 'DAKAR', 'DAMASKUS', 'DHAKA', 'DOHA', 'DUBLIN',
+      'ERIWAN', 'HANOI', 'HARARE', 'HAVANNA', 'HELSINKI', 'JAKARTA', 'JERUSALEM', 'KABUL', 'KAIRO',
+      'KAMPALA', 'KATHMANDU', 'KIEW', 'KIGALI', 'LIMA', 'LISSABON', 'LONDON', 'LUANDA', 'LUSAKA',
+      'MADRID', 'MANILA', 'MAPUTO', 'MASKAT', 'MINSK', 'MOSKAU', 'NAIROBI', 'NIKOSIA', 'OSLO',
+      'OTTAWA', 'PARIS', 'PEKING', 'PRAG', 'QUITO', 'RABAT', 'RIAD', 'RIGA', 'SANAA', 'SANTIAGO',
+      'SARAJEVO', 'SEOUL', 'SKOPJE', 'SOFIA', 'STOCKHOLM', 'TALLINN', 'TASCHKENT', 'TEHERAN',
+      'TIFLIS', 'TIRANA', 'TOKIO', 'TUNIS', 'VADUZ', 'VALLETTA', 'VILNIUS', 'WARSCHAU', 'WIEN',
+      'ZAGREB',
+    ],
+  },
+  {
+    id: 'fruit',
+    clue: 'Welche Frucht ist gesucht?',
+    words: [
+      'ANANAS', 'APFEL', 'APRIKOSE', 'AVOCADO', 'BANANE', 'BIRNE', 'BROMBEERE', 'DATTEL',
+      'ERDBEERE', 'FEIGE', 'GUAVE', 'HIMBEERE', 'KIRSCHE', 'KIWI', 'KOKOSNUSS', 'LIMETTE',
+      'LITSCHI', 'MANDARINE', 'MANGO', 'MARACUJA', 'MARILLE', 'MELONE', 'MIRABELLE', 'NEKTARINE',
+      'ORANGE', 'PAPAYA', 'PFIRSICH', 'PFLAUME', 'QUITTE', 'TRAUBE', 'ZITRONE', 'ZWETSCHGE',
+    ],
+  },
+  {
+    id: 'animal',
+    clue: 'Welches Tier ist gesucht?',
+    words: [
+      'ADLER', 'AFFE', 'ALPAKA', 'AMEISE', 'AMSEL', 'BIBER', 'BIENE', 'BISON', 'DACHS', 'DELFIN',
+      'ECHSE', 'ELCH', 'ELEFANT', 'ENTE', 'ESEL', 'EULE', 'FALKE', 'FLAMINGO', 'FLIEGE',
+      'FORELLE', 'FROSCH', 'FUCHS', 'GANS', 'GEPARD', 'GIRAFFE', 'GORILLA', 'HAMSTER', 'HASE',
+      'HECHT', 'HERMELIN', 'HIRSCH', 'HUHN', 'HUMMER', 'HUND', 'IGEL', 'JAGUAR', 'KAMEL',
+      'KARPFEN', 'KATZE', 'KOALA', 'KRABBE', 'KRANICH', 'KROKODIL', 'LACHS', 'LAMA', 'LEOPARD',
+      'LUCHS', 'MARDER', 'MAUS', 'MEISE', 'MOTTE', 'MUSCHEL', 'NASHORN', 'NILPFERD', 'OTTER',
+      'PANDA', 'PAPAGEI', 'PFAU', 'PFERD', 'PINGUIN', 'PUMA', 'QUALLE', 'RABE', 'RATTE', 'RAUPE',
+      'REIHER', 'ROBBE', 'SCHAF', 'SCHLANGE', 'SCHNECKE', 'SCHWAN', 'SCHWEIN', 'SPATZ', 'SPECHT',
+      'SPINNE', 'STORCH', 'STRAUSS', 'TAUBE', 'TIGER', 'WESPE', 'WIESEL', 'WOLF', 'WURM', 'ZEBRA',
+      'ZIEGE',
+    ],
+  },
+  {
+    id: 'body',
+    clue: 'Welcher Körperteil ist gesucht?',
+    words: [
+      'ACHSEL', 'ADER', 'ARM', 'AUGE', 'BAUCH', 'BECKEN', 'BEIN', 'BRAUE', 'BRUST', 'DARM',
+      'DAUMEN', 'ELLBOGEN', 'FERSE', 'FINGER', 'FUSS', 'GAUMEN', 'GEHIRN', 'HAAR', 'HALS', 'HAND',
+      'HAUT', 'HERZ', 'KIEFER', 'KINN', 'KNIE', 'KNOCHEN', 'KOPF', 'LEBER', 'LIPPE', 'LUNGE',
+      'MAGEN', 'MANDEL', 'MILZ', 'MUND', 'MUSKEL', 'NABEL', 'NACKEN', 'NAGEL', 'NASE', 'NERV',
+      'NIERE', 'OHR', 'RIPPE', 'SCHULTER', 'SEHNE', 'STIRN', 'VENE', 'WADE', 'WANGE', 'WIMPER',
+      'ZAHN', 'ZEHE', 'ZUNGE',
+    ],
+  },
+  {
+    id: 'vegetable',
+    clue: 'Welches Gemüse ist gesucht?',
+    words: [
+      'BOHNE', 'BROKKOLI', 'ERBSE', 'FENCHEL', 'GURKE', 'KARFIOL', 'KAROTTE', 'KARTOFFEL', 'KOHL',
+      'LAUCH', 'MAIS', 'PAPRIKA', 'RETTICH', 'SALAT', 'SELLERIE', 'SPARGEL', 'SPINAT', 'TOMATE',
+      'ZUCCHINI', 'ZWIEBEL',
+    ],
+  },
+  {
+    id: 'instrument',
+    clue: 'Welches Musikinstrument ist gesucht?',
+    words: [
+      'CELLO', 'GEIGE', 'GITARRE', 'HARFE', 'HORN', 'KLAVIER', 'OBOE', 'ORGEL', 'POSAUNE',
+      'SAXOPHON', 'TROMMEL', 'TROMPETE', 'TUBA', 'ZITHER',
+    ],
+  },
+  // Small categories: easier anagrams
+  {
+    id: 'planet',
+    clue: 'Welcher Planet ist gesucht?',
+    easy: true,
+    words: ['ERDE', 'JUPITER', 'MARS', 'MERKUR', 'NEPTUN', 'SATURN', 'URANUS', 'VENUS'],
+  },
+  {
+    id: 'weekday',
+    clue: 'Welcher Wochentag ist gesucht?',
+    easy: true,
+    words: ['DIENSTAG', 'FREITAG', 'MITTWOCH', 'MONTAG', 'SAMSTAG', 'SONNTAG'],
+  },
+  {
+    id: 'month',
+    clue: 'Welcher Monat ist gesucht?',
+    easy: true,
+    words: ['APRIL', 'AUGUST', 'DEZEMBER', 'FEBRUAR', 'JANUAR', 'JULI', 'JUNI', 'NOVEMBER', 'OKTOBER'],
+  },
+  {
+    id: 'chess',
+    clue: 'Welche Schachfigur ist gesucht?',
+    easy: true,
+    words: ['BAUER', 'DAME', 'SPRINGER', 'TURM'],
+  },
+]
