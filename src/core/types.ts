@@ -23,8 +23,6 @@ export type Cell =
   | { kind: 'given'; letter: string }
   | { kind: 'symbol'; symbol: number }
 
-export type Level = 'easy' | 'medium' | 'hard'
-
 export interface LetterPuzzle {
   id: string
   lang: string
@@ -40,8 +38,11 @@ export interface LetterPuzzle {
     /** Symbols shown under the clue, in shuffled display order */
     symbols: number[]
   }
-  /** Letters offered in the picker per level (given letters never included) */
-  options: Record<Level, string[]>
+  /**
+   * Letters offered in the picker: the alphabet minus the printed letters.
+   * The app's hint can remove letters not in `key` from this set.
+   */
+  picker: string[]
   stats: PuzzleStats
 }
 
@@ -58,10 +59,13 @@ export interface Deduction {
 
 export interface PuzzleStats {
   symbols: number
+  /** Distinct printed letters */
   givenLetters: number
+  /** Printed cells (a letter printed twice counts twice) */
+  givenCells: number
   /** Rarest grid word's rank in the frequency list (0 = most common) */
   maxWordRank: number
   meanWordRank: number
-  /** How the puzzle can be solved with each level's letter choices */
-  deduction: Record<Level, Deduction>
+  /** How the puzzle can be solved with the full picker */
+  deduction: Deduction
 }

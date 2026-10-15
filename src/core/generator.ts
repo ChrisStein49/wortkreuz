@@ -3,7 +3,7 @@
 // reveal letters until the grid has exactly one solution.
 import type { Template } from './grid.ts'
 import { countSolutions, deduce, solveByForcedWords, type Pattern } from './solver.ts'
-import type { Category, Cell, Deduction, LetterPuzzle, Level, WordEntry } from './types.ts'
+import type { Category, Cell, Deduction, LetterPuzzle, WordEntry } from './types.ts'
 
 export type Rng = () => number
 
@@ -38,11 +38,11 @@ export interface GeneratorOptions {
   /** Only grid words with rank below this are placed (familiarity) */
   maxWordRank: number
   symbols: { min: number; max: number }
-  /** Fewest distinct letters printed in the grid */
-  minGivenLetters: number
+  /** Fewest printed cells (a letter printed twice counts twice) */
+  minGivenCells: number
+  /** Only accept puzzles that can be filled word by word without trying */
+  requireForced: boolean
   solutionLength: { min: number; max: number }
-  /** Extra wrong letters offered in the picker on top of the symbol letters */
-  decoys: { easy: number; medium: number }
   /** Restrict to these category ids (default: all) */
   categoryIds?: readonly string[]
 }
@@ -120,26 +120,35 @@ export function tryGenerate(p: Prepared, rng: Rng, id: string): LetterPuzzle | n
   const category = pick(rng, [...new Set(fitting.map((s) => s.category))])
   const sol = pick(rng, fitting.filter((s) => s.category === category))
 
-  const maxSymbols = Math.min(opts.symbols.max, distinct.size - opts.minGivenLetters)
-  if (sol.letters.size > maxSymbols) return null
-  const target = Math.min(maxSymbols, opts.symbols.min + Math.floor(rng() * (opts.symbols.max - opts.symbols.min + 1)))
+  const target = opts.symbols.min + Math.floor(rng() * (opts.symbols.max - opts.symbols.min + 1))
   const symbolLetters = new Set(sol.letters)
   const extras = shuffle(rng, [...distinct].filter((l) => !symbolLetters.has(l)))
   while (symbolLetters.size < target && extras.length) symbolLetters.add(extras.pop()!)
 
-  // Reveal non-solution letters until the grid has exactly one solution
+  // Reveal non-solution letters until the grid has exactly one solution,
+  // enough printed cells, and (if required) can be filled word by word
   for (;;) {
     if (symbolLetters.size < opts.symbols.min) return null
     const pattern = toPattern(t, letters, symbolLetters)
     // every word needs at least one symbol, otherwise it is a freebie
     if (t.slots.some((slot) => slot.every((c) => typeof pattern.cells[c] === 'string'))) return null
-    const n = countSolutions(pattern, p.valid, 2)
-    if (n === 1) return finish(p, rng, id, words, letters, symbolLetters, sol)
-    if (n === 0) throw new Error(`no solution for ${words.join(' ')}`)
+    const givenCells = pattern.cells.filter((c) => typeof c === 'string').length
+    if (givenCells >= opts.minGivenCells) {
+      const n = countSolutions(pattern, p.valid, 2)
+      if (n === 0) throw new Error(`no solution for ${words.join(' ')}`)
+      if (n === 1 && (!opts.requireForced || solveByForcedWords(pattern, p.valid, pickerLetters(p, letters, symbolLetters)).solved))
+        return finish(p, rng, id, words, letters, symbolLetters, sol)
+    }
     const revealable = [...symbolLetters].filter((l) => !sol.letters.has(l))
     if (revealable.length === 0) return null
     symbolLetters.delete(pick(rng, revealable))
   }
+}
+
+/** Alphabet minus the letters printed in the grid */
+function pickerLetters(p: Prepared, letters: string[], symbolLetters: Set<string>) {
+  const given = new Set(letters.filter((l) => l && !symbolLetters.has(l)))
+  return p.opts.alphabet.filter((l) => !given.has(l))
 }
 
 function toPattern(t: Template, letters: string[], symbolLetters: Set<string>, order?: string[]): Pattern {
@@ -170,33 +179,20 @@ function finish(
   const cells: Cell[] = pattern.cells.map((c) =>
     c === null ? { kind: 'blocked' } : typeof c === 'string' ? { kind: 'given', letter: c } : { kind: 'symbol', symbol: c },
   )
-  const given = new Set(letters.filter((l) => l && !symbolLetters.has(l)))
-  const pool = opts.alphabet.filter((l) => !given.has(l))
-  const wrong = shuffle(rng, pool.filter((l) => !symbolLetters.has(l)))
-  const sorted = (xs: string[]) => [...xs].sort()
-  const options: Record<Level, string[]> = {
-    easy: sorted([...key, ...wrong.slice(0, opts.decoys.easy)]),
-    medium: sorted([...key, ...wrong.slice(0, opts.decoys.medium)]),
-    hard: sorted(pool),
-  }
+  const picker = pickerLetters(p, letters, symbolLetters)
+  const givenCells = cells.filter((c) => c.kind === 'given')
 
   let display = shuffle(rng, [...sol.word])
   for (let i = 0; i < 10 && display.join('') === sol.word; i++) display = shuffle(rng, [...sol.word])
 
   const ranks = words.map((w) => p.rank.get(w)!)
-  const deduction = Object.fromEntries(
-    (['easy', 'medium', 'hard'] as const).map((lvl) => {
-      const f = solveByForcedWords(pattern, p.valid, options[lvl])
-      const e = deduce(pattern, p.valid, options[lvl])
-      const d: Deduction = {
-        forced: f.solved,
-        forcedWords: f.filled,
-        openingChoices: f.openingChoices,
-        elimination: e.solved,
-      }
-      return [lvl, d]
-    }),
-  ) as LetterPuzzle['stats']['deduction']
+  const f = solveByForcedWords(pattern, p.valid, picker)
+  const deduction: Deduction = {
+    forced: f.solved,
+    forcedWords: f.filled,
+    openingChoices: f.openingChoices,
+    elimination: deduce(pattern, p.valid, picker).solved,
+  }
 
   return {
     id,
@@ -210,10 +206,11 @@ function finish(
       word: sol.word,
       symbols: display.map((l) => symbolOf.get(l)!),
     },
-    options,
+    picker,
     stats: {
       symbols: key.length,
-      givenLetters: given.size,
+      givenLetters: new Set(givenCells.map((c) => c.kind === 'given' && c.letter)).size,
+      givenCells: givenCells.length,
       maxWordRank: Math.max(...ranks),
       meanWordRank: Math.round(ranks.reduce((a, b) => a + b, 0) / ranks.length),
       deduction,

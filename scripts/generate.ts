@@ -10,10 +10,15 @@ import { CLASSIC_5 } from '../src/core/grid.ts'
 import type { LetterPuzzle } from '../src/core/types.ts'
 import { ALPHABET, CATEGORIES, LANG } from '../src/lang/de/index.ts'
 
-const PRESETS: Record<string, Pick<GeneratorOptions, 'maxWordRank' | 'symbols' | 'minGivenLetters' | 'solutionLength'>> = {
-  leicht: { maxWordRank: 400, symbols: { min: 5, max: 7 }, minGivenLetters: 5, solutionLength: { min: 4, max: 6 } },
-  mittel: { maxWordRank: 650, symbols: { min: 6, max: 8 }, minGivenLetters: 4, solutionLength: { min: 5, max: 7 } },
-  schwer: { maxWordRank: 900, symbols: { min: 7, max: 9 }, minGivenLetters: 3, solutionLength: { min: 5, max: 8 } },
+type Preset = Pick<GeneratorOptions, 'maxWordRank' | 'symbols' | 'minGivenCells' | 'requireForced' | 'solutionLength'>
+
+// At most 6 symbols so the colours stay easy to tell apart. "leicht" aims at
+// the printed newsletter: readers can't try letters out, so it must be
+// fillable word by word.
+const PRESETS: Record<string, Preset> = {
+  leicht: { maxWordRank: 400, symbols: { min: 4, max: 5 }, minGivenCells: 10, requireForced: true, solutionLength: { min: 4, max: 6 } },
+  mittel: { maxWordRank: 650, symbols: { min: 5, max: 6 }, minGivenCells: 8, requireForced: true, solutionLength: { min: 5, max: 6 } },
+  schwer: { maxWordRank: 900, symbols: { min: 6, max: 6 }, minGivenCells: 6, requireForced: false, solutionLength: { min: 5, max: 7 } },
 }
 
 const [presetName = 'mittel', countArg = '12', seedArg = '1'] = process.argv.slice(2)
@@ -26,7 +31,6 @@ const prepared = prepare({
   template: CLASSIC_5,
   words: words5,
   categories: CATEGORIES,
-  decoys: { easy: 3, medium: 8 },
   ...preset,
 })
 
@@ -48,8 +52,8 @@ for (const p of puzzles) {
   const d = p.stats.deduction
   const words = [0, 2, 4].map((r) => rowWord(p, r)).join(' ')
   console.log(
-    `${p.id.padEnd(18)} ${words}  -> ${p.solution.word.padEnd(9)} sym ${p.stats.symbols} given ${p.stats.givenLetters} ` +
-      `rank ${p.stats.meanWordRank}/${p.stats.maxWordRank}  forced e/m/h ${(['easy', 'medium', 'hard'] as const).map((l) => (d[l].forced ? 'Y' : d[l].forcedWords)).join('')} open ${d.hard.openingChoices}`,
+    `${p.id.padEnd(18)} ${words}  -> ${p.solution.word.padEnd(9)} sym ${p.stats.symbols} given ${p.stats.givenCells} cells/${p.stats.givenLetters} letters ` +
+      `rank ${p.stats.meanWordRank}/${p.stats.maxWordRank}  word-by-word ${d.forced ? 'Y' : `${d.forcedWords}/6`} open ${d.openingChoices}`,
   )
 }
 
@@ -63,14 +67,15 @@ function rowWord(p: LetterPuzzle, r: number) {
 
 // Review page: puzzle as the player sees it, solution revealed on click
 function reviewPage(title: string, puzzles: LetterPuzzle[]) {
-  const COLORS = ['#e53935', '#fb8c00', '#fdd835', '#43a047', '#00897b', '#1e88e5', '#8e24aa', '#ec407a', '#6d4c41', '#212121', '#ffffff']
+  // Six clearly distinct colours: red, orange, green, blue, pink, black
+  const COLORS = ['#d62828', '#f28c00', '#2e9e44', '#1f5fd1', '#e85aa8', '#222222']
   const disc = (s: number) => `<span class="disc" style="background:${COLORS[s]}"></span>`
   const card = (p: LetterPuzzle) => {
     const cells = p.cells
       .map((c, i) => {
         if (c.kind === 'blocked') return '<div class="cell blocked"></div>'
         if (c.kind === 'given') return `<div class="cell">${c.letter}</div>`
-        return `<div class="cell sym">${disc(c.symbol)}<b style="color:${COLORS[c.symbol] === '#ffffff' ? '#999' : COLORS[c.symbol]}">${letterAt(p, i)}</b></div>`
+        return `<div class="cell sym">${disc(c.symbol)}<b style="color:${COLORS[c.symbol]}">${letterAt(p, i)}</b></div>`
       })
       .join('')
     const d = p.stats.deduction
@@ -82,11 +87,10 @@ function reviewPage(title: string, puzzles: LetterPuzzle[]) {
     <p class="answer">${p.solution.word}</p>
     <table>
       <tr><td>Symbole</td><td>${p.stats.symbols}</td></tr>
-      <tr><td>Vorgegebene Buchstaben</td><td>${p.stats.givenLetters}</td></tr>
+      <tr><td>Vorgegebene Felder (verschiedene Buchstaben)</td><td>${p.stats.givenCells} (${p.stats.givenLetters})</td></tr>
       <tr><td>Wort-Rang Ø / max</td><td>${p.stats.meanWordRank} / ${p.stats.maxWordRank}</td></tr>
-      <tr><td>Wort für Wort lösbar (leicht / mittel / schwer)</td><td>${(['easy', 'medium', 'hard'] as const).map((l) => (d[l].forced ? '✓' : `✗ (${d[l].forcedWords}/6)`)).join(' / ')}</td></tr>
-      <tr><td>Kandidaten für den Einstieg (schwer)</td><td>${d.hard.openingChoices}</td></tr>
-      <tr><td>Auswahl leicht</td><td>${p.options.easy.join(' ')}</td></tr>
+      <tr><td>Wort für Wort lösbar</td><td>${d.forced ? '✓' : `✗ – nach ${d.forcedWords} von 6 Wörtern muss man probieren`}</td></tr>
+      <tr><td>Passende Wörter am engsten Einstieg</td><td>${d.openingChoices}</td></tr>
     </table>
     <p class="id">${p.id}</p>
   </div>
@@ -115,7 +119,7 @@ function reviewPage(title: string, puzzles: LetterPuzzle[]) {
   .id { font-size: 11px; color: #999; } .card { cursor: pointer; }
 </style></head><body>
 <h1>Wortkreuz – Prüfstapel „${title}“ (${puzzles.length} Rätsel)</h1>
-<p class="note">Klick auf ein Rätsel zeigt die Lösung. „Wort für Wort lösbar“ heißt: es gibt immer ein Wort, das als einziges passt; so lässt sich das Rätsel ohne Probieren füllen (mit der Buchstabenauswahl der jeweiligen Stufe). „Einstieg“: wie viele Wörter am Anfang in den engsten Platz passen.</p>
+<p class="note">Klick auf ein Rätsel zeigt die Lösung. „Wort für Wort lösbar“: Es gibt immer ein Wort, das als einziges passt. Trägt man es ein, ergibt sich das nächste – so lässt sich das ganze Rätsel ohne Probieren füllen. „Engster Einstieg“: wie viele Wörter am Anfang in die Zeile/Spalte mit den wenigsten Möglichkeiten passen (1 = es gibt einen sicheren Startpunkt).</p>
 ${puzzles.map(card).join('\n')}
 <script>document.querySelectorAll('.card').forEach(c => c.addEventListener('click', () => c.classList.toggle('show')))</script>
 </body></html>
