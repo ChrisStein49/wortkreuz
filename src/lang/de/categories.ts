@@ -1,7 +1,8 @@
 import type { Category } from '../../core/types.ts'
 
-// Solution-word categories. Words are uppercase A-Z: names with umlauts or
-// ß are left out entirely (no Ä -> AE spelling), matching the grid words.
+// Solution-word categories. Words are uppercase A-Z: words with umlauts or
+// ß are left out entirely (no Ä -> AE, no ß -> SS spelling), matching the
+// grid words. "ss" in current spelling (NUSS, RUSSLAND) is fine.
 // `easy` categories have few members, so the anagram is quick to spot.
 export const CATEGORIES: readonly Category[] = [
   {
@@ -61,7 +62,7 @@ export const CATEGORIES: readonly Category[] = [
       'LUCHS', 'MARDER', 'MAUS', 'MEISE', 'MOTTE', 'MUSCHEL', 'NASHORN', 'NILPFERD', 'OTTER',
       'PANDA', 'PAPAGEI', 'PFAU', 'PFERD', 'PINGUIN', 'PUMA', 'QUALLE', 'RABE', 'RATTE', 'RAUPE',
       'REIHER', 'ROBBE', 'SCHAF', 'SCHLANGE', 'SCHNECKE', 'SCHWAN', 'SCHWEIN', 'SPATZ', 'SPECHT',
-      'SPINNE', 'STORCH', 'STRAUSS', 'TAUBE', 'TIGER', 'WESPE', 'WIESEL', 'WOLF', 'WURM', 'ZEBRA',
+      'SPINNE', 'STORCH', 'TAUBE', 'TIGER', 'WESPE', 'WIESEL', 'WOLF', 'WURM', 'ZEBRA',
       'ZIEGE',
     ],
   },
@@ -70,7 +71,7 @@ export const CATEGORIES: readonly Category[] = [
     clue: 'Welcher Körperteil ist gesucht?',
     words: [
       'ACHSEL', 'ADER', 'ARM', 'AUGE', 'BAUCH', 'BECKEN', 'BEIN', 'BRAUE', 'BRUST', 'DARM',
-      'DAUMEN', 'ELLBOGEN', 'FERSE', 'FINGER', 'FUSS', 'GAUMEN', 'GEHIRN', 'HAAR', 'HALS', 'HAND',
+      'DAUMEN', 'ELLBOGEN', 'FERSE', 'FINGER', 'GAUMEN', 'GEHIRN', 'HAAR', 'HALS', 'HAND',
       'HAUT', 'HERZ', 'KIEFER', 'KINN', 'KNIE', 'KNOCHEN', 'KOPF', 'LEBER', 'LIPPE', 'LUNGE',
       'MAGEN', 'MANDEL', 'MILZ', 'MUND', 'MUSKEL', 'NABEL', 'NACKEN', 'NAGEL', 'NASE', 'NERV',
       'NIERE', 'OHR', 'RIPPE', 'SCHULTER', 'SEHNE', 'STIRN', 'VENE', 'WADE', 'WANGE', 'WIMPER',
@@ -92,6 +93,53 @@ export const CATEGORIES: readonly Category[] = [
     words: [
       'CELLO', 'GEIGE', 'GITARRE', 'HARFE', 'HORN', 'KLAVIER', 'OBOE', 'ORGEL', 'POSAUNE',
       'SAXOPHON', 'TROMMEL', 'TROMPETE', 'TUBA', 'ZITHER',
+    ],
+  },
+  {
+    id: 'sport',
+    clue: 'Welche Sportart ist gesucht?',
+    words: [
+      'BADMINTON', 'BASEBALL', 'BIATHLON', 'BILLARD', 'BOWLING', 'BOXEN', 'CRICKET', 'CURLING',
+      'DARTS', 'FECHTEN', 'GOLF', 'HANDBALL', 'HOCKEY', 'JUDO', 'KARATE', 'KEGELN', 'LANGLAUF',
+      'MARATHON', 'POLO', 'RINGEN', 'RODELN', 'RUDERN', 'RUGBY', 'SCHACH', 'SEGELN', 'SLALOM',
+      'SQUASH', 'SUMO', 'SURFEN', 'TENNIS', 'TRIATHLON', 'TURNEN',
+    ],
+  },
+  {
+    id: 'kitchen',
+    clue: 'Welcher Küchengegenstand ist gesucht?',
+    words: [
+      'BACKOFEN', 'BECHER', 'DECKEL', 'EIERUHR', 'FLASCHE', 'GABEL', 'GLAS', 'GRILL', 'HERD',
+      'KANNE', 'KELLE', 'KESSEL', 'KRUG', 'MESSER', 'MIXER', 'NUDELHOLZ', 'OFEN', 'PFANNE', 'REIBE',
+      'SCHALE', 'SERVIETTE', 'SIEB', 'SPATEL', 'TABLETT', 'TASSE', 'TELLER', 'TOASTER', 'TOPF',
+      'TRICHTER', 'WAAGE', 'WOK', 'ZANGE',
+    ],
+  },
+  {
+    id: 'clothing',
+    clue: 'Welches Kleidungsstück ist gesucht?',
+    words: [
+      'ANZUG', 'BADEHOSE', 'BIKINI', 'BLAZER', 'BLUSE', 'DIRNDL', 'HANDSCHUH', 'HEMD', 'HOSE',
+      'HUT', 'JACKE', 'JEANS', 'KAPPE', 'KAPUZE', 'KIMONO', 'KLEID', 'KORSETT', 'KRAWATTE',
+      'LEDERHOSE', 'MANTEL', 'OVERALL', 'PANTOFFEL', 'PARKA', 'PONCHO', 'PULLOVER', 'PYJAMA',
+      'ROCK', 'SAKKO', 'SANDALE', 'SCHAL', 'SCHUH', 'SHORTS', 'SOCKE', 'STIEFEL', 'STRUMPF',
+      'TRACHT', 'TUNIKA', 'UMHANG', 'WESTE',
+    ],
+  },
+  {
+    id: 'plant',
+    clue: 'Welche Pflanze ist gesucht?',
+    words: [
+      // trees
+      'AHORN', 'BIRKE', 'BUCHE', 'EIBE', 'EICHE', 'ERLE', 'ESCHE', 'FICHTE', 'KASTANIE', 'KIEFER',
+      'LINDE', 'PALME', 'PAPPEL', 'TANNE', 'ULME', 'WEIDE', 'ZEDER',
+      // flowers
+      'ASTER', 'DAHLIE', 'ENZIAN', 'FLIEDER', 'GERANIE', 'HORTENSIE', 'IRIS', 'JASMIN', 'KAMILLE',
+      'KROKUS', 'LAVENDEL', 'LILIE', 'MARGERITE', 'MOHN', 'NARZISSE', 'NELKE', 'ORCHIDEE', 'PRIMEL',
+      'ROSE', 'TULPE', 'VEILCHEN',
+      // other plants
+      'BAMBUS', 'DISTEL', 'EFEU', 'FARN', 'GINSTER', 'HOLUNDER', 'KAKTUS', 'KLEE', 'MISTEL',
+      'MOOS', 'ROSMARIN', 'SALBEI', 'SCHILF', 'THYMIAN',
     ],
   },
   // Small categories: easier anagrams
