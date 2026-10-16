@@ -19,6 +19,12 @@ export function mulberry32(seed: number): Rng {
 }
 
 const pick = <T>(rng: Rng, xs: readonly T[]) => xs[Math.floor(rng() * xs.length)]
+function pickWeighted<T>(rng: Rng, xs: readonly T[], weight: (x: T) => number): T {
+  const ws = xs.map(weight)
+  let r = rng() * ws.reduce((a, b) => a + b, 0)
+  for (let i = 0; i < xs.length; i++) if ((r -= ws[i]) < 0) return xs[i]
+  return xs[xs.length - 1]
+}
 function shuffle<T>(rng: Rng, xs: readonly T[]): T[] {
   const a = [...xs]
   for (let i = a.length - 1; i > 0; i--) {
@@ -40,6 +46,17 @@ export interface GeneratorOptions {
   symbols: { min: number; max: number }
   /** Fewest printed cells (a letter printed twice counts twice) */
   minGivenCells: number
+  /** Most printed cells, so the grid doesn't look mostly filled in */
+  maxGivenCells: number
+  /**
+   * Most distinct solution letters shown as plain letters instead of symbols
+   * (letters missing from the grid, or printed in it)
+   */
+  maxPlainSolutionLetters: number
+  /** Share of attempts that may use plain solution letters at all (0-1) */
+  plainSolutionShare: number
+  /** Relative chance of picking an `easy` (small) category, others weigh 1 */
+  easyCategoryWeight: number
   /** Only accept puzzles that can be filled word by word without trying */
   requireForced: boolean
   solutionLength: { min: number; max: number }
@@ -112,27 +129,48 @@ export function tryGenerate(p: Prepared, rng: Rng, id: string): LetterPuzzle | n
   const letters = gridLetters(t, words)
   const distinct = new Set(letters.filter(Boolean))
 
-  const fitting = p.solutions.filter(
-    (s) => s.letters.size <= opts.symbols.max && [...s.letters].every((l) => distinct.has(l)),
-  )
+  // Solution letters missing from the grid must be shown as plain letters.
+  // Only some attempts may use them, so all-symbol solutions stay the norm.
+  const maxPlain = rng() < opts.plainSolutionShare ? opts.maxPlainSolutionLetters : 0
+  const missing = (s: Prepared['solutions'][number]) => [...s.letters].filter((l) => !distinct.has(l))
+  const fitting = p.solutions.filter((s) => {
+    const m = missing(s).length
+    return m <= maxPlain && s.letters.size - maxPlain <= opts.symbols.max
+  })
   if (fitting.length === 0) return null
   // Pick a category first so big categories (countries) don't crowd out the rest
-  const category = pick(rng, [...new Set(fitting.map((s) => s.category))])
-  const sol = pick(rng, fitting.filter((s) => s.category === category))
+  const category = pickWeighted(rng, [...new Set(fitting.map((s) => s.category))], (c) =>
+    c.easy ? opts.easyCategoryWeight : 1,
+  )
+  const sol = pickWeighted(
+    rng,
+    fitting.filter((s) => s.category === category),
+    (s) => 1 / (1 + 2 * missing(s).length), // prefer all-symbol solutions
+  )
 
+  // plain: solution letters shown as letters, not symbols
+  const plain = new Set(missing(sol))
+  const symbolLetters = new Set([...sol.letters].filter((l) => !plain.has(l)))
+  for (const l of shuffle(rng, [...symbolLetters])) {
+    if (symbolLetters.size <= opts.symbols.max) break
+    symbolLetters.delete(l)
+    plain.add(l)
+  }
   const target = opts.symbols.min + Math.floor(rng() * (opts.symbols.max - opts.symbols.min + 1))
-  const symbolLetters = new Set(sol.letters)
-  const extras = shuffle(rng, [...distinct].filter((l) => !symbolLetters.has(l)))
+  const extras = shuffle(rng, [...distinct].filter((l) => !sol.letters.has(l)))
   while (symbolLetters.size < target && extras.length) symbolLetters.add(extras.pop()!)
 
-  // Reveal non-solution letters until the grid has exactly one solution,
-  // enough printed cells, and (if required) can be filled word by word
+  // Reveal letters until the grid has exactly one solution, enough printed
+  // cells, and (if required) can be filled word by word. Non-solution letters
+  // go first; a solution letter may be revealed while plain letters are left.
   for (;;) {
     if (symbolLetters.size < opts.symbols.min) return null
     const pattern = toPattern(t, letters, symbolLetters)
     // every word needs at least one symbol, otherwise it is a freebie
     if (t.slots.some((slot) => slot.every((c) => typeof pattern.cells[c] === 'string'))) return null
     const givenCells = pattern.cells.filter((c) => typeof c === 'string').length
+    // revealing only adds printed cells, so past the maximum this grid is done
+    if (givenCells > opts.maxGivenCells) return null
     if (givenCells >= opts.minGivenCells) {
       const n = countSolutions(pattern, p.valid, 2)
       if (n === 0) throw new Error(`no solution for ${words.join(' ')}`)
@@ -140,8 +178,13 @@ export function tryGenerate(p: Prepared, rng: Rng, id: string): LetterPuzzle | n
         return finish(p, rng, id, words, letters, symbolLetters, sol)
     }
     const revealable = [...symbolLetters].filter((l) => !sol.letters.has(l))
-    if (revealable.length === 0) return null
-    symbolLetters.delete(pick(rng, revealable))
+    if (revealable.length > 0) {
+      symbolLetters.delete(pick(rng, revealable))
+    } else if (plain.size < maxPlain) {
+      const l = pick(rng, [...symbolLetters])
+      symbolLetters.delete(l)
+      plain.add(l)
+    } else return null
   }
 }
 
@@ -204,11 +247,12 @@ function finish(
       categoryId: sol.category.id,
       clue: sol.category.clue,
       word: sol.word,
-      symbols: display.map((l) => symbolOf.get(l)!),
+      tiles: display.map((l) => (symbolOf.has(l) ? { symbol: symbolOf.get(l)! } : { letter: l })),
     },
     picker,
     stats: {
       symbols: key.length,
+      plainSolutionLetters: [...sol.letters].filter((l) => !symbolOf.has(l)).length,
       givenLetters: new Set(givenCells.map((c) => c.kind === 'given' && c.letter)).size,
       givenCells: givenCells.length,
       maxWordRank: Math.max(...ranks),

@@ -23,6 +23,8 @@ export type Cell =
   | { kind: 'given'; letter: string }
   | { kind: 'symbol'; symbol: number }
 
+export type SolutionTile = { symbol: number } | { letter: string }
+
 export interface LetterPuzzle {
   id: string
   lang: string
@@ -35,8 +37,12 @@ export interface LetterPuzzle {
     categoryId: string
     clue: string
     word: string
-    /** Symbols shown under the clue, in shuffled display order */
-    symbols: number[]
+    /**
+     * Tiles shown under the clue, in shuffled display order: mostly symbols,
+     * plus plain letters for solution letters that aren't symbols (not in
+     * the grid, or printed in it)
+     */
+    tiles: SolutionTile[]
   }
   /**
    * Letters offered in the picker: the alphabet minus the printed letters.
@@ -59,6 +65,8 @@ export interface Deduction {
 
 export interface PuzzleStats {
   symbols: number
+  /** Distinct solution letters shown as plain letters instead of symbols */
+  plainSolutionLetters: number
   /** Distinct printed letters */
   givenLetters: number
   /** Printed cells (a letter printed twice counts twice) */

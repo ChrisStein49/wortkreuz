@@ -10,15 +10,15 @@ import { CLASSIC_5 } from '../src/core/grid.ts'
 import type { LetterPuzzle } from '../src/core/types.ts'
 import { ALPHABET, CATEGORIES, LANG } from '../src/lang/de/index.ts'
 
-type Preset = Pick<GeneratorOptions, 'maxWordRank' | 'symbols' | 'minGivenCells' | 'requireForced' | 'solutionLength'>
+type Preset = Pick<GeneratorOptions, 'maxWordRank' | 'symbols' | 'minGivenCells' | 'requireForced' | 'maxPlainSolutionLetters' | 'solutionLength'>
 
 // At most 6 symbols so the colours stay easy to tell apart. "leicht" aims at
 // the printed newsletter: readers can't try letters out, so it must be
 // fillable word by word.
 const PRESETS: Record<string, Preset> = {
-  leicht: { maxWordRank: 400, symbols: { min: 4, max: 5 }, minGivenCells: 10, requireForced: true, solutionLength: { min: 4, max: 6 } },
-  mittel: { maxWordRank: 650, symbols: { min: 5, max: 6 }, minGivenCells: 8, requireForced: true, solutionLength: { min: 5, max: 6 } },
-  schwer: { maxWordRank: 900, symbols: { min: 6, max: 6 }, minGivenCells: 6, requireForced: false, solutionLength: { min: 5, max: 7 } },
+  leicht: { maxWordRank: 400, symbols: { min: 4, max: 5 }, minGivenCells: 10, requireForced: true, maxPlainSolutionLetters: 2, solutionLength: { min: 4, max: 7 } },
+  mittel: { maxWordRank: 650, symbols: { min: 5, max: 6 }, minGivenCells: 8, requireForced: true, maxPlainSolutionLetters: 2, solutionLength: { min: 5, max: 8 } },
+  schwer: { maxWordRank: 900, symbols: { min: 6, max: 6 }, minGivenCells: 6, requireForced: false, maxPlainSolutionLetters: 2, solutionLength: { min: 5, max: 9 } },
 }
 
 const [presetName = 'mittel', countArg = '12', seedArg = '1'] = process.argv.slice(2)
@@ -31,6 +31,9 @@ const prepared = prepare({
   template: CLASSIC_5,
   words: words5,
   categories: CATEGORIES,
+  plainSolutionShare: 0.25,
+  maxGivenCells: 14,
+  easyCategoryWeight: 0.3,
   ...preset,
 })
 
@@ -52,7 +55,7 @@ for (const p of puzzles) {
   const d = p.stats.deduction
   const words = [0, 2, 4].map((r) => rowWord(p, r)).join(' ')
   console.log(
-    `${p.id.padEnd(18)} ${words}  -> ${p.solution.word.padEnd(9)} sym ${p.stats.symbols} given ${p.stats.givenCells} cells/${p.stats.givenLetters} letters ` +
+    `${p.id.padEnd(18)} ${words}  -> ${p.solution.word.padEnd(9)} plain ${p.stats.plainSolutionLetters} sym ${p.stats.symbols} given ${p.stats.givenCells} cells/${p.stats.givenLetters} letters ` +
       `rank ${p.stats.meanWordRank}/${p.stats.maxWordRank}  word-by-word ${d.forced ? 'Y' : `${d.forcedWords}/6`} open ${d.openingChoices}`,
   )
 }
@@ -83,10 +86,11 @@ function reviewPage(title: string, puzzles: LetterPuzzle[]) {
   <div class="grid">${cells}</div>
   <div class="side">
     <p class="clue">${p.solution.clue}</p>
-    <div class="hint">${p.solution.symbols.map(disc).join('')}</div>
+    <div class="hint">${p.solution.tiles.map((t) => ('symbol' in t ? disc(t.symbol) : `<span class="plain">${t.letter}</span>`)).join('')}</div>
     <p class="answer">${p.solution.word}</p>
     <table>
       <tr><td>Symbole</td><td>${p.stats.symbols}</td></tr>
+      <tr><td>Lösungsbuchstaben ohne Symbol</td><td>${p.stats.plainSolutionLetters}</td></tr>
       <tr><td>Vorgegebene Felder (verschiedene Buchstaben)</td><td>${p.stats.givenCells} (${p.stats.givenLetters})</td></tr>
       <tr><td>Wort-Rang Ø / max</td><td>${p.stats.meanWordRank} / ${p.stats.maxWordRank}</td></tr>
       <tr><td>Wort für Wort lösbar</td><td>${d.forced ? '✓' : `✗ – nach ${d.forcedWords} von 6 Wörtern muss man probieren`}</td></tr>
@@ -111,7 +115,8 @@ function reviewPage(title: string, puzzles: LetterPuzzle[]) {
   .disc { display: inline-block; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid #555; box-sizing: border-box; }
   .cell b { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: #f7f7f7; }
   .card.show .cell b { display: flex; }
-  .hint { display: flex; gap: 6px; flex-wrap: wrap; } .hint .disc { width: 30px; height: 30px; }
+  .hint { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; } .hint .disc { width: 30px; height: 30px; }
+  .plain { width: 30px; text-align: center; font: 600 24px 'Noto Serif', serif; }
   .answer { display: none; font: 600 28px 'Noto Serif', serif; letter-spacing: 2px; }
   .card.show .answer { display: block; }
   .clue { font-size: 17px; margin-top: 0; }
