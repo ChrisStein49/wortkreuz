@@ -34,3 +34,20 @@ npm run review            # browse scripts/out/*.html
 
 Every generated puzzle is checked to have exactly one solution against the
 full valid-word list (wider than the words placed in grids).
+
+## Daily calendar
+
+Five puzzles per day, the same for everyone, stored in
+`src/data/daily-de.json` (compact format, see `src/core/codec.ts`).
+Weekdays run leicht, leicht, mittel, mittel, schwer; Saturday and Sunday
+leicht, mittel, mittel, schwer, schwer (`src/core/schedule.ts`).
+
+```
+npm run build-daily -- 365      # append a year after the last existing day
+npx tsx scripts/checkDaily.ts   # re-verify every puzzle and print stats
+```
+
+Existing days are never regenerated, so past days (the archive) stay
+stable. Each day uses five different categories; solution words are spaced
+at least 60 days apart where possible, grid words a few days apart.
+`scripts/out/daily.html` shows the first two weeks of each new batch.

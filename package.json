@@ -11,6 +11,7 @@
     "fetch-data": "tsx scripts/fetchData.ts",
     "build-words": "tsx scripts/buildWordList.ts",
     "generate": "tsx scripts/generate.ts",
+    "build-daily": "tsx scripts/buildDaily.ts",
     "review": "vite scripts/out --port 5180 --strictPort"
   },
   "dependencies": {
