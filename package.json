@@ -12,7 +12,8 @@
     "build-words": "tsx scripts/buildWordList.ts",
     "generate": "tsx scripts/generate.ts",
     "build-daily": "tsx scripts/buildDaily.ts",
-    "review": "vite scripts/out --port 5180 --strictPort"
+    "review": "vite scripts/out --port 5180 --strictPort",
+    "mockup": "vite mockups --port 5181 --strictPort"
   },
   "dependencies": {
     "react": "^19.2.8",

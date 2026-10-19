@@ -4,14 +4,29 @@
     {
       "name": "wortkreuz-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 5174
     },
     {
       "name": "wortkreuz-review",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "review"],
+      "runtimeArgs": [
+        "run",
+        "review"
+      ],
       "port": 5180
+    },
+    {
+      "name": "wortkreuz-mockup",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "mockup"
+      ],
+      "port": 5181
     }
   ]
 }

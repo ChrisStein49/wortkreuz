@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wortkreuz – Mockup Spielablauf</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #d62828; --orange: #f28c00; --green: #2e9e44; --blue: #1f5fd1; --pink: #e85aa8; --black: #222222;
+    --ink: #1d1b1a; --muted: #6b6560; --paper: #faf8f5; --cell: #ffffff; --blocked: #3a302e;
+    --accent: #4e2996; --line: #d9d3cc; --glow: #ffd23f;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px 16px 48px; background: #e9e5e0; font-family: Inter, sans-serif; color: var(--ink); }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .intro { color: var(--muted); max-width: 70em; margin: 0 0 24px; line-height: 1.45; }
+  .screens { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+  .screen { width: 360px; }
+  .screen h2 { font-size: 15px; margin: 0 0 8px; }
+  .notes { font-size: 13px; color: #4a4540; line-height: 1.45; margin: 10px 4px 0; padding-left: 18px; }
+  .notes li { margin-bottom: 4px; }
+
+  .phone { width: 360px; height: 740px; background: var(--paper); border-radius: 36px; border: 10px solid #1b1b1b;
+           position: relative; overflow: hidden; display: flex; flex-direction: column; }
+  .status { height: 26px; font-size: 12px; display: flex; justify-content: space-between; padding: 6px 22px 0; color: #333; }
+
+  /* top bar */
+  .bar { display: flex; align-items: center; gap: 10px; padding: 8px 14px 6px; }
+  .bar .back { font-size: 22px; color: var(--muted); width: 24px; }
+  .bar .title { flex: 1; font-weight: 600; font-size: 15px; }
+  .bar .title small { display: block; font-weight: 500; font-size: 12px; color: var(--muted); }
+  .timer { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px; background: #fff; border: 1px solid var(--line);
+           border-radius: 14px; padding: 3px 10px; }
+  .iconbtn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: #fff; display: grid;
+             place-items: center; font-size: 17px; position: relative; }
+  .iconbtn .count { position: absolute; top: -4px; right: -4px; background: var(--accent); color: #fff; font-size: 10px;
+                    border-radius: 8px; padding: 1px 5px; font-weight: 700; }
+
+  /* grid */
+  .board { display: grid; grid-template-columns: repeat(5, 58px); border: 3px solid var(--ink); margin: 6px auto 0; width: max-content; }
+  .c { width: 58px; height: 58px; border: 1px solid #a8a29b; background: var(--cell); display: grid; place-items: center;
+       font: 700 30px 'Noto Serif', serif; position: relative; }
+  .c.x { background: var(--blocked); }
+  .c svg { width: 46px; height: 46px; }
+  .c.sel { box-shadow: inset 0 0 0 4px var(--glow); background: #fff8dc; }
+  .c .badge { position: absolute; right: 2px; bottom: 2px; width: 16px; height: 16px; display: block; line-height: 0; }
+  .c svg, .tile svg, .sheet svg { display: block; }
+  .c .badge svg { width: 16px; height: 16px; }
+  .c.filled { font-weight: 700; }
+
+  /* solution area */
+  .sol { margin: 14px 18px 0; text-align: center; }
+  .clue { font-size: 15px; margin-bottom: 8px; }
+  .tiles { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+  .tile { width: 42px; height: 46px; border-radius: 8px; background: #fff; border: 1px solid var(--line); display: grid;
+          place-items: center; position: relative; font: 700 24px 'Noto Serif', serif; }
+  .tile svg { width: 34px; height: 34px; }
+  .tile.used { opacity: .25; }
+  .tile .l { position: absolute; inset: 0; display: grid; place-items: center; }
+  .slots { display: flex; justify-content: center; gap: 6px; margin: 4px 0 12px; }
+  .slot { width: 42px; height: 48px; border-bottom: 3px solid var(--ink); display: grid; place-items: end center;
+          font: 700 30px 'Noto Serif', serif; padding-bottom: 2px; }
+  .slot.empty { border-bottom-color: #b5aea6; }
+  .slot.picked { background: #fff8dc; box-shadow: 0 0 0 3px var(--glow); border-radius: 6px 6px 0 0; }
+
+  /* letter picker (bottom sheet) */
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; border-radius: 20px 20px 0 0;
+           box-shadow: 0 -6px 24px rgba(0,0,0,.18); padding: 10px 8px 18px; }
+  .sheet .grab { width: 40px; height: 4px; border-radius: 2px; background: #ccc; margin: 0 auto 8px; }
+  .sheet .head { display: flex; align-items: center; gap: 8px; padding: 0 8px 8px; font-size: 14px; }
+  .sheet .head svg { width: 30px; height: 30px; }
+  .sheet .head .grow { flex: 1; }
+  .hintbtn { font-size: 13px; border: 1px solid var(--accent); color: var(--accent); background: #f4f0fb; border-radius: 16px;
+             padding: 5px 10px; font-weight: 600; white-space: nowrap; }
+  .keys { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .row { display: flex; gap: 3px; }
+  .k { width: 29px; height: 44px; border-radius: 6px; background: #efebe6; display: grid; place-items: center;
+       font-weight: 600; font-size: 17px; position: relative; }
+  .k.given { background: #f6f4f1; color: #c9c3bc; }
+  .k.struck { background: #f6f4f1; color: #c9c3bc; text-decoration: line-through; }
+  .k.taken { color: #fff; }
+  .k.current { outline: 3px solid var(--glow); }
+  .k.wide { width: 61px; font-size: 13px; }
+
+  /* overview */
+  .ov { padding: 4px 16px; flex: 1; display: flex; flex-direction: column; }
+  .brand { font: 700 26px 'Noto Serif', serif; margin: 6px 0 0; }
+  .date { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+  .streak { display: flex; gap: 10px; margin-bottom: 16px; }
+  .pill { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; font-size: 12px; color: var(--muted); }
+  .pill b { display: block; font-size: 20px; color: var(--ink); }
+  .card { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--line); border-radius: 14px;
+          padding: 11px 12px; margin-bottom: 9px; }
+  .card .n { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: #efebe6; }
+  .card.done .n { background: var(--green); color: #fff; }
+  .card.active { border: 2px solid var(--accent); }
+  .card .info { flex: 1; font-size: 14px; font-weight: 600; }
+  .card .info small { display: block; font-weight: 500; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .dots { display: inline-flex; gap: 3px; margin-left: 4px; vertical-align: middle; }
+  .dots i { width: 7px; height: 7px; border-radius: 50%; background: #d4cec7; display: inline-block; }
+  .dots i.on { background: var(--accent); }
+  .card .right { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+  .links { margin-top: auto; display: flex; gap: 10px; padding-bottom: 14px; }
+  .links div { flex: 1; text-align: center; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 10px; font-size: 14px; font-weight: 600; }
+
+  /* solved */
+  .done-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 20px; text-align: center; }
+  .done-wrap .big { font: 700 34px 'Noto Serif', serif; letter-spacing: 3px; margin: 10px 0 2px; }
+  .done-wrap .cat { color: var(--muted); font-size: 14px; }
+  .stats { display: flex; gap: 10px; margin: 20px 0; width: 100%; }
+  .stats div { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 6px; font-size: 12px; color: var(--muted); }
+  .stats b { display: block; font-size: 22px; color: var(--ink); }
+  .btn { width: 100%; border-radius: 14px; padding: 13px; font-weight: 700; font-size: 15px; margin-bottom: 10px; text-align: center; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.secondary { background: #fff; border: 1px solid var(--line); }
+  .mini { transform: scale(.62); transform-origin: top center; margin-bottom: -112px; }
+</style>
+</head>
+<body>
+<h1>Wortkreuz – Mockup Spielablauf</h1>
+<p class="intro">Statischer Entwurf zum Besprechen, noch keine echte App. Rätsel: heute (16. Oktober) Nr. 3, mittel –
+KABEL · ALARM · ERNTE waagrecht, KLAUE · BRAUN · LAMPE senkrecht, Lösungswort MERKUR.
+Farben: die sechs festen Gänsefarben (rot, orange, grün, blau, rosa, schwarz).</p>
+
+<div class="screens">
+
+<!-- 1 Overview -->
+<div class="screen">
+  <h2>1 · Tagesübersicht</h2>
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+    <div class="ov">
+      <div class="brand">Wortkreuz</div>
+      <div class="date">Freitag, 16. Oktober 2026</div>
+      <div class="streak">
+        <div class="pill"><b>🔥 5</b>Tage in Folge</div>
+        <div class="pill"><b>2 / 5</b>heute gelöst · ab 3 zählt der Tag</div>
+      </div>
+      <div class="card done"><div class="n">✓</div><div class="info">Rätsel 1 <span class="dots"><i class="on"></i><i></i><i></i></span><small>Pflanze</small></div><div class="right">1:12</div></div>
+      <div class="card done"><div class="n">✓</div><div class="info">Rätsel 2 <span class="dots"><i class="on"></i><i></i><i></i></span><small>Schachfigur</small></div><div class="right">2:05<br>1 Tipp</div></div>
+      <div class="card active"><div class="n">3</div><div class="info">Rätsel 3 <span class="dots"><i class="on"></i><i class="on"></i><i></i></span><small>angefangen</small></div><div class="right">0:48</div></div>
+      <div class="card"><div class="n">4</div><div class="info">Rätsel 4 <span class="dots"><i class="on"></i><i class="on"></i><i></i></span><small>&nbsp;</small></div><div class="right"></div></div>
+      <div class="card"><div class="n">5</div><div class="info">Rätsel 5 <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span><small>&nbsp;</small></div><div class="right"></div></div>
+      <div class="links"><div>📅 Archiv</div><div>❔ Spielregeln</div></div>
+    </div>
+  </div>
+  <ul class="notes">
+    <li>Fünf Rätsel pro Tag, in beliebiger Reihenfolge spielbar; Punkte zeigen die Schwierigkeit.</li>
+    <li>Die Kategorie wird erst nach dem Lösen gezeigt (sonst verrät sie zu viel).</li>
+    <li>Die Serie zählt Tage, an denen mindestens <b>3 von 5</b> Rätseln gelöst wurden.</li>
+  </ul>
+</div>
+
+<!-- 2 Playing with picker -->
+<div class="screen">
+  <h2>2 · Spielen – Gans gewählt</h2>
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+    <div class="bar">
+      <div class="back">‹</div>
+      <div class="title">Rätsel 3 von 5<small>mittel</small></div>
+      <div class="timer">0:48</div>
+    </div>
+    <div class="board" id="board2"></div>
+    <div class="sol">
+      <div class="clue">Welcher Planet ist gesucht?</div>
+      <div class="tiles" id="tiles2"></div>
+    </div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <div class="head"><span id="selgoose"></span><span class="grow">Welcher Buchstabe?</span><span class="hintbtn">💡 Tipp · noch 2</span></div>
+      <div class="keys" id="keys"></div>
+    </div>
+  </div>
+  <ul class="notes">
+    <li>Tippen auf eine Gans markiert <b>alle Gänse dieser Farbe</b> und öffnet die Buchstabenauswahl von unten – das Gitter bleibt, wo es ist.</li>
+    <li>Im Gitter vorgegebene Buchstaben sind ausgegraut. Buchstaben, die schon eine andere Farbe hat, zeigen diese Farbe (antippen = dorthin umziehen).</li>
+    <li><b>Tipp</b> streicht einen Buchstaben, der nicht vorkommt (hier das X). <b>3 Tipps pro Rätsel</b>; einer ist schon verbraucht.</li>
+    <li>Gelöste Gänse zeigen den Buchstaben in ihrer Farbe, mit kleiner Gans in der Ecke (bleibt änderbar).</li>
+  </ul>
+</div>
+
+<!-- 3 Solution word -->
+<div class="screen">
+  <h2>3 · Lösungswort legen</h2>
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+    <div class="bar">
+      <div class="back">‹</div>
+      <div class="title">Rätsel 3 von 5<small>mittel</small></div>
+      <div class="timer">2:31</div>
+    </div>
+    <div class="board" id="board3"></div>
+    <div class="sol">
+      <div class="clue">Welcher Planet ist gesucht?</div>
+      <div class="slots" id="slots3"></div>
+      <div class="tiles" id="tiles3"></div>
+    </div>
+  </div>
+  <ul class="notes">
+    <li>Die Gänse unter der Frage zeigen die Buchstaben, die man ihnen gegeben hat.</li>
+    <li>Antippen legt einen Buchstaben in die nächste freie Lücke.</li>
+    <li><b>Tauschen:</b> gelegten Buchstaben antippen (wird markiert, hier das E), dann einen anderen gelegten antippen – beide tauschen die Plätze. Markierten Buchstaben nochmals antippen = zurück zu den Gänsen. Alternativ: einen Buchstaben auf einen anderen ziehen.</li>
+    <li>Das Lösungswort kann man jederzeit legen – gelöst ist das Rätsel aber erst, wenn <b>alle Farben stimmen und</b> das Wort stimmt.</li>
+    <li>Sind alle Lücken gefüllt, aber etwas falsch: „Noch nicht ganz“ – ohne zu verraten, was.</li>
+  </ul>
+</div>
+
+<!-- 4 Solved -->
+<div class="screen">
+  <h2>4 · Gelöst</h2>
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>●●● 100%</span></div>
+    <div class="bar"><div class="back">‹</div><div class="title">Rätsel 3 von 5<small>mittel</small></div></div>
+    <div class="done-wrap">
+      <div style="font-size:15px;font-weight:600;color:var(--green)">Gelöst!</div>
+      <div class="big">MERKUR</div>
+      <div class="cat">Planet</div>
+      <div class="mini"><div class="board" id="board4"></div></div>
+      <div class="stats"><div><b>2:47</b>Zeit</div><div><b>1</b>Tipp</div><div><b>3 / 5</b>heute</div></div>
+      <div class="btn primary">Weiter zu Rätsel 4</div>
+      <div class="btn secondary">Ergebnis teilen</div>
+    </div>
+  </div>
+  <ul class="notes">
+    <li>Zeit und Tipps sind der „Punktestand“; die Zeit läuft nur, solange die App offen ist.</li>
+    <li>Teilen verrät keine Lösung, z. B. „Wortkreuz 16.10. · Rätsel 3 🟢 2:47 · 1 Tipp“.</li>
+  </ul>
+</div>
+
+</div>
+
+<script type="module">
+import { GEESE, gooseSvg } from './goose-art.js'
+
+// Puzzle: today's #3 (packed: 1AB3LL.2.AALA240.0.P32NT3|UKREM|302124|MERKUR|planet)
+const GRID = '1AB3LL.2.AALA240.0.P32NT3'
+const KEY = 'UKREM'
+const TILES = '302124'
+const COLORS = GEESE.map((g) => g.body)
+
+// The newsletter goose (assets/geese/goose-yellow.svg) in variant C colours
+const goose = (i) => gooseSvg(GEESE[i])
+
+// state per screen: which symbols are filled
+function board(el, filled, selected) {
+  el.innerHTML = [...GRID].map((ch) => {
+    if (ch === '.') return '<div class="c x"></div>'
+    if (!/[0-9]/.test(ch)) return `<div class="c">${ch}</div>`
+    const s = Number(ch)
+    const sel = s === selected ? ' sel' : ''
+    if (filled.includes(s)) return `<div class="c filled${sel}" style="color:${COLORS[s]}">${KEY[s]}<span class="badge">${goose(s)}</span></div>`
+    return `<div class="c${sel}">${goose(s)}</div>`
+  }).join('')
+}
+
+function tiles(el, filled, used = []) {
+  el.innerHTML = [...TILES].map((ch, i) => {
+    const s = Number(ch)
+    const letter = filled.includes(s) ? `<span class="l" style="color:${COLORS[s]}">${KEY[s]}</span>` : ''
+    return `<div class="tile${used.includes(i) ? ' used' : ''}">${letter ? '' : goose(s)}${letter}</div>`
+  }).join('')
+}
+
+// Screen 2: K (1) and E (3) found, orange (R = 2) selected
+board(document.getElementById('board2'), [1, 3], 2)
+tiles(document.getElementById('tiles2'), [1, 3])
+document.getElementById('selgoose').innerHTML = goose(2)
+const given = new Set([...GRID].filter((ch) => /[A-Z]/.test(ch)))
+const taken = { K: 1, E: 3 }
+const struck = new Set(['X'])
+const rows = ['QWERTZUIOP', 'ASDFGHJKL', 'YXCVBNM']
+document.getElementById('keys').innerHTML = rows.map((r, ri) =>
+  `<div class="row">${[...r].map((l) => {
+    if (given.has(l)) return `<div class="k given">${l}</div>`
+    if (struck.has(l)) return `<div class="k struck">${l}</div>`
+    if (l in taken) return `<div class="k taken" style="background:${COLORS[taken[l]]}">${l}</div>`
+    return `<div class="k">${l}</div>`
+  }).join('')}${ri === 2 ? '<div class="k wide">löschen</div>' : ''}</div>`).join('')
+
+// Screen 3: all found, "MER" placed (tiles 4=M? order E U R K R M -> M is index 5, E index 0, R index 2)
+board(document.getElementById('board3'), [0, 1, 2, 3, 4])
+tiles(document.getElementById('tiles3'), [0, 1, 2, 3, 4], [5, 0, 2])
+document.getElementById('slots3').innerHTML = ['M', 'E', 'R', '', '', ''].map((l, i) => {
+  const s = [4, 3, 2][i]
+  const picked = i === 1 ? ' picked' : '' // E selected for swapping
+  return l ? `<div class="slot${picked}" style="color:${COLORS[s]}">${l}</div>` : '<div class="slot empty"></div>'
+}).join('')
+
+// Screen 4
+board(document.getElementById('board4'), [0, 1, 2, 3, 4])
+</script>
+</body>
+</html>

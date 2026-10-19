@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wortkreuz – Gänse</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 24px 16px 48px; background: #e9e5e0; font-family: Inter, sans-serif; color: #1d1b1a; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  p.intro { color: #6b6560; max-width: 60em; margin: 0 0 20px; line-height: 1.45; }
+  .panel { border-radius: 12px; padding: 16px; margin-bottom: 20px; background: #fff; }
+  .panel.dark { background: #1c1a19; color: #eee; }
+  .panel h2 { font-size: 16px; margin: 0 0 4px; }
+  .panel p { margin: 0 0 12px; color: #6b6560; font-size: 13px; }
+  .panel.dark p { color: #a8a29b; }
+  .big { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+  .big svg { width: 96px; height: 110px; }
+  .opt { display: inline-flex; flex-direction: column; align-items: center; font-size: 12px; gap: 4px; }
+  .cells { display: flex; border: 3px solid #1d1b1a; width: max-content; }
+  .dark .cells { border-color: #d8d2cb; }
+  .cell { width: 58px; height: 58px; border: 1px solid #a8a29b; display: grid; place-items: center; background: #fff;
+          font: 700 30px 'Noto Serif', serif; color: #1d1b1a; }
+  .dark .cell { background: #2c2927; border-color: #4a4542; color: #f1ece6; }
+  .cell.x { background: #3a302e; } .dark .cell.x { background: #0f0e0d; }
+  .cell svg { width: 46px; height: 46px; }
+  .row { display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
+  .small svg { width: 16px; height: 16px; }
+  .small { display: flex; gap: 6px; align-items: center; font-size: 12px; color: #6b6560; }
+</style>
+</head>
+<body>
+<h1>Gänse – Variante C</h1>
+<p class="intro">Aus <code>assets/geese/goose-yellow.svg</code> erzeugt: Körper in der Gänsefarbe, Schnabel und Füße orange
+(bei der orangen Gans dunkler), Umriss eine dunklere Stufe der Farbe. Unten: Grautöne für den Umriss der schwarzen Gans,
+und alles auf dunklem Hintergrund als Vorschau für einen möglichen Dunkelmodus.</p>
+<div id="out"></div>
+
+<script type="module">
+import { GEESE, gooseSvg } from './goose-art.js'
+
+const GREYS = ['#5c5c5c', '#7a7a7a', '#9a9a9a', '#bcbcbc', '#dedede']
+const black = GEESE.find((g) => g.name === 'black')
+
+function panel(dark) {
+  const geese = GEESE.map((g) => gooseSvg(g))
+  const greys = GREYS.map((o) => `<div class="opt">${gooseSvg({ ...black, outline: o })}<span>${o}${o === black.outline ? ' (jetzt)' : ''}</span></div>`)
+  return `<section class="panel${dark ? ' dark' : ''}">
+    <h2>${dark ? 'Dunkler Hintergrund' : 'Heller Hintergrund'}</h2>
+    <p>Die sechs Gänse, im Rätselgitter und klein.</p>
+    <div class="big">${geese.join('')}</div>
+    <div class="row">
+      <div class="cells">${geese.map((g) => `<div class="cell">${g}</div>`).join('')}<div class="cell">A</div><div class="cell x"></div></div>
+      <div class="small">klein: ${geese.join('')}</div>
+    </div>
+    <h2 style="margin-top:18px">Umriss der schwarzen Gans</h2>
+    <p>Fünf Grautöne zur Auswahl.</p>
+    <div class="big">${greys.join('')}</div>
+  </section>`
+}
+document.getElementById('out').innerHTML = panel(false) + panel(true)
+</script>
+</body>
+</html>
