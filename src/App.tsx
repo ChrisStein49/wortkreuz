@@ -1,13 +1,18 @@
 import { useMemo, useState } from 'react'
 import { puzzlesFor, toIsoDate, type Calendar } from './core/calendar.ts'
-import { dailyDifficulties } from './core/schedule.ts'
+import { dailyDifficulties, PUZZLES_PER_DAY } from './core/schedule.ts'
 import daily from './data/daily-de.json'
 import { dayResult } from './game/dayResult.ts'
-import { loadProgress } from './game/storage.ts'
-import { formatTime, UI } from './lang/de/ui.ts'
+import { loadProgress, markRulesSeen, rulesSeen, solvedCount } from './game/storage.ts'
+import { currentStreak } from './game/streak.ts'
+import { UI } from './lang/de/ui.ts'
+import { Overview } from './components/Overview.tsx'
 import { PlayScreen } from './components/PlayScreen.tsx'
+import { Rules } from './components/Rules.tsx'
 
 const calendar = daily as Calendar
+
+type Screen = { name: 'overview' } | { name: 'play'; index: number } | { name: 'rules' }
 
 export default function App() {
   // Fixed for the session; a new day starts on the next app launch
@@ -15,18 +20,35 @@ export default function App() {
   const iso = toIsoDate(today)
   const puzzles = useMemo(() => puzzlesFor(calendar, today), [today])
   const levels = dailyDifficulties(today)
-  const [open, setOpen] = useState<number | null>(null)
+  // First launch: explain the rules once
+  const [screen, setScreen] = useState<Screen>(() => (rulesSeen() ? { name: 'overview' } : { name: 'rules' }))
   const [version, setVersion] = useState(0) // bumps when a puzzle gets solved
 
   const progress = useMemo(
     () => (puzzles ?? []).map((_, i) => loadProgress(iso, i)),
-    [puzzles, iso, version, open], // eslint-disable-line react-hooks/exhaustive-deps
+    [puzzles, iso, version, screen], // eslint-disable-line react-hooks/exhaustive-deps
   )
   const day = dayResult(levels, progress)
+  const streak = useMemo(
+    () => currentStreak(today, (d) => solvedCount(d, PUZZLES_PER_DAY), calendar.start),
+    [today, version], // eslint-disable-line react-hooks/exhaustive-deps
+  )
+
+  if (screen.name === 'rules') {
+    return (
+      <Rules
+        onClose={() => {
+          markRulesSeen()
+          setScreen({ name: 'overview' })
+        }}
+      />
+    )
+  }
 
   if (!puzzles) return <div className="screen"><p className="no-puzzles">{UI.noPuzzles}</p></div>
 
-  if (open !== null) {
+  if (screen.name === 'play') {
+    const open = screen.index
     // next unsolved puzzle after this one, wrapping around
     const nextIndex = Array.from({ length: puzzles.length - 1 }, (_, k) => (open + k + 1) % puzzles.length).find(
       (i) => !progress[i]?.solved,
@@ -41,33 +63,22 @@ export default function App() {
         total={puzzles.length}
         difficulty={levels[open]}
         day={day}
-        onBack={() => setOpen(null)}
-        next={nextIndex === undefined ? null : { index: nextIndex, open: () => setOpen(nextIndex) }}
+        onBack={() => setScreen({ name: 'overview' })}
+        next={nextIndex === undefined ? null : { index: nextIndex, open: () => setScreen({ name: 'play', index: nextIndex }) }}
         onProgress={() => setVersion((v) => v + 1)}
       />
     )
   }
 
-  // Interim day list until the real overview (next step) replaces it
   return (
-    <div className="screen overview">
-      <h1 className="brand">{UI.appName}</h1>
-      <div className="date">{UI.date(today)}</div>
-      <p className="placeholder-note">{UI.overviewPlaceholder}</p>
-      {puzzles.map((_, i) => {
-        const p = progress[i]
-        return (
-          <button key={i} type="button" className={`card${p?.solved ? ' done' : ''}`} onClick={() => setOpen(i)}>
-            <span className="card-n">{p?.solved ? '✓' : i + 1}</span>
-            <span className="card-info">
-              {UI.puzzle(i + 1)} <small>{UI.difficulty[levels[i]]}</small>
-            </span>
-            <span className="card-right">
-              {p?.solved ? formatTime(p.elapsedMs) : p && p.elapsedMs > 0 ? UI.started : ''}
-            </span>
-          </button>
-        )
-      })}
-    </div>
+    <Overview
+      date={today}
+      puzzles={puzzles}
+      progress={progress}
+      day={day}
+      streak={streak}
+      onOpen={(index) => setScreen({ name: 'play', index })}
+      onRules={() => setScreen({ name: 'rules' })}
+    />
   )
 }
