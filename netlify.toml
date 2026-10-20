@@ -4,3 +4,8 @@
 
 [build.environment]
   NODE_VERSION = "24"
+# Test deployment: keep search engines out until the app goes live
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
