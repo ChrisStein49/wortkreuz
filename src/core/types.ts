@@ -3,6 +3,8 @@
 
 export interface Category {
   id: string
+  /** Shown after solving, e.g. "Planet" */
+  name: string
   /** Question shown with the solution geese, e.g. "Welches Land ist gesucht?" */
   clue: string
   words: readonly string[]

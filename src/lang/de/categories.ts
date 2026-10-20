@@ -7,6 +7,7 @@ import type { Category } from '../../core/types.ts'
 export const CATEGORIES: readonly Category[] = [
   {
     id: 'country',
+    name: 'Land',
     clue: 'Welches Land ist gesucht?',
     words: [
       'ALBANIEN', 'ALGERIEN', 'ANDORRA', 'ANGOLA', 'ARMENIEN', 'BAHRAIN', 'BARBADOS', 'BELARUS',
@@ -26,6 +27,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'capital',
+    name: 'Hauptstadt',
     clue: 'Welche Hauptstadt ist gesucht?',
     words: [
       'ABUJA', 'ACCRA', 'ALGIER', 'AMMAN', 'AMSTERDAM', 'ANKARA', 'ASTANA', 'ATHEN', 'BAGDAD',
@@ -42,6 +44,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'fruit',
+    name: 'Frucht',
     clue: 'Welche Frucht ist gesucht?',
     words: [
       'ANANAS', 'APFEL', 'APRIKOSE', 'AVOCADO', 'BANANE', 'BIRNE', 'BROMBEERE', 'DATTEL',
@@ -52,6 +55,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'animal',
+    name: 'Tier',
     clue: 'Welches Tier ist gesucht?',
     words: [
       'ADLER', 'AFFE', 'ALPAKA', 'AMEISE', 'AMSEL', 'BIBER', 'BIENE', 'BISON', 'DACHS', 'DELFIN',
@@ -68,6 +72,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'body',
+    name: 'Körperteil',
     clue: 'Welcher Körperteil ist gesucht?',
     words: [
       'ACHSEL', 'ADER', 'ARM', 'AUGE', 'BAUCH', 'BECKEN', 'BEIN', 'BRAUE', 'BRUST', 'DARM',
@@ -80,6 +85,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'vegetable',
+    name: 'Gemüse',
     clue: 'Welches Gemüse ist gesucht?',
     words: [
       'BOHNE', 'BROKKOLI', 'ERBSE', 'FENCHEL', 'GURKE', 'KARFIOL', 'KAROTTE', 'KARTOFFEL', 'KOHL',
@@ -89,6 +95,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'instrument',
+    name: 'Musikinstrument',
     clue: 'Welches Musikinstrument ist gesucht?',
     words: [
       'CELLO', 'GEIGE', 'GITARRE', 'HARFE', 'HORN', 'KLAVIER', 'OBOE', 'ORGEL', 'POSAUNE',
@@ -97,6 +104,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'sport',
+    name: 'Sportart',
     clue: 'Welche Sportart ist gesucht?',
     words: [
       'BADMINTON', 'BASEBALL', 'BIATHLON', 'BILLARD', 'BOWLING', 'BOXEN', 'CRICKET', 'CURLING',
@@ -107,6 +115,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'kitchen',
+    name: 'Küchengegenstand',
     clue: 'Welcher Küchengegenstand ist gesucht?',
     words: [
       'BACKOFEN', 'BECHER', 'DECKEL', 'EIERUHR', 'FLASCHE', 'GABEL', 'GLAS', 'GRILL', 'HERD',
@@ -117,6 +126,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'clothing',
+    name: 'Kleidungsstück',
     clue: 'Welches Kleidungsstück ist gesucht?',
     words: [
       'ANZUG', 'BADEHOSE', 'BIKINI', 'BLAZER', 'BLUSE', 'DIRNDL', 'HANDSCHUH', 'HEMD', 'HOSE',
@@ -128,6 +138,7 @@ export const CATEGORIES: readonly Category[] = [
   },
   {
     id: 'plant',
+    name: 'Pflanze',
     clue: 'Welche Pflanze ist gesucht?',
     words: [
       // trees
@@ -145,24 +156,28 @@ export const CATEGORIES: readonly Category[] = [
   // Small categories: easier anagrams
   {
     id: 'planet',
+    name: 'Planet',
     clue: 'Welcher Planet ist gesucht?',
     easy: true,
     words: ['ERDE', 'JUPITER', 'MARS', 'MERKUR', 'NEPTUN', 'SATURN', 'URANUS', 'VENUS'],
   },
   {
     id: 'weekday',
+    name: 'Wochentag',
     clue: 'Welcher Wochentag ist gesucht?',
     easy: true,
     words: ['DIENSTAG', 'FREITAG', 'MITTWOCH', 'MONTAG', 'SAMSTAG', 'SONNTAG'],
   },
   {
     id: 'month',
+    name: 'Monat',
     clue: 'Welcher Monat ist gesucht?',
     easy: true,
     words: ['APRIL', 'AUGUST', 'DEZEMBER', 'FEBRUAR', 'JANUAR', 'JULI', 'JUNI', 'NOVEMBER', 'OKTOBER'],
   },
   {
     id: 'chess',
+    name: 'Schachfigur',
     clue: 'Welche Schachfigur ist gesucht?',
     easy: true,
     words: ['BAUER', 'DAME', 'SPRINGER', 'TURM'],
