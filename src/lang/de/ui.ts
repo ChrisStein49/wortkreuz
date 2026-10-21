@@ -19,7 +19,7 @@ export const UI = {
   clear: 'Reset',
   hint: (left: number) => (left > 0 ? `Tipp · noch ${left}` : 'keine Tipps mehr'),
   hintTitle: 'Streicht einen Buchstaben, der nicht vorkommt',
-  notYet: 'Noch nicht ganz – ein Buchstabe oder die Reihenfolge stimmt noch nicht.',
+  notYet: 'Fast fertig – ein Buchstabe oder die Reihenfolge beim Lösungswort stimmt noch nicht.',
   solved: 'Gelöst!',
   time: 'Zeit',
   hints: (n: number) => (n === 1 ? 'Tipp' : 'Tipps'),
