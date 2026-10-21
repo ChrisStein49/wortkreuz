@@ -3,7 +3,7 @@ import { puzzlesFor, toIsoDate, type Calendar } from './core/calendar.ts'
 import { dailyDifficulties, PUZZLES_PER_DAY } from './core/schedule.ts'
 import daily from './data/daily-de.json'
 import { dayResult } from './game/dayResult.ts'
-import { loadProgress, markRulesSeen, rulesSeen, solvedCount } from './game/storage.ts'
+import { introDone, loadProgress, markIntroDone, solvedCount } from './game/storage.ts'
 import { currentStreak } from './game/streak.ts'
 import { UI } from './lang/de/ui.ts'
 import { Overview } from './components/Overview.tsx'
@@ -20,8 +20,14 @@ export default function App() {
   const iso = toIsoDate(today)
   const puzzles = useMemo(() => puzzlesFor(calendar, today), [today])
   const levels = dailyDifficulties(today)
-  // First launch: explain the rules once
-  const [screen, setScreen] = useState<Screen>(() => (rulesSeen() ? { name: 'overview' } : { name: 'rules' }))
+  // Always start on the overview; first-time players get a card there
+  // suggesting the instructions (many know the puzzle from the newsletter)
+  const [screen, setScreen] = useState<Screen>({ name: 'overview' })
+  const [showIntro, setShowIntro] = useState(() => !introDone())
+  const finishIntro = () => {
+    markIntroDone()
+    setShowIntro(false)
+  }
   const [version, setVersion] = useState(0) // bumps when a puzzle gets solved
 
   const progress = useMemo(
@@ -37,10 +43,7 @@ export default function App() {
   if (screen.name === 'rules') {
     return (
       <Rules
-        onClose={() => {
-          markRulesSeen()
-          setScreen({ name: 'overview' })
-        }}
+        onClose={() => setScreen({ name: 'overview' })}
       />
     )
   }
@@ -65,7 +68,10 @@ export default function App() {
         day={day}
         onBack={() => setScreen({ name: 'overview' })}
         next={nextIndex === undefined ? null : { index: nextIndex, open: () => setScreen({ name: 'play', index: nextIndex }) }}
-        onProgress={() => setVersion((v) => v + 1)}
+        onProgress={() => {
+          setVersion((v) => v + 1)
+          finishIntro() // solving a puzzle shows they know how it works
+        }}
       />
     )
   }
@@ -79,6 +85,17 @@ export default function App() {
       streak={streak}
       onOpen={(index) => setScreen({ name: 'play', index })}
       onRules={() => setScreen({ name: 'rules' })}
+      intro={
+        showIntro
+          ? {
+              onShow: () => {
+                finishIntro()
+                setScreen({ name: 'rules' })
+              },
+              onSkip: finishIntro,
+            }
+          : null
+      }
     />
   )
 }

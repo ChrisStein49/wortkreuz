@@ -110,6 +110,10 @@ button:disabled { cursor: default; }
 /* day overview */
 .brand { font: 400 28px 'Arbutus Slab', Georgia, serif; margin: 8px 0 0; }
 .date { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+.intro-card { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
+.intro-card p { margin: 0 0 10px; font-size: 15px; }
+.intro-actions { display: flex; gap: 8px; }
+.intro-actions .btn { margin: 0; padding: 10px; font-size: 14px; }
 .pills { display: flex; gap: 10px; margin-bottom: 16px; }
 .pill { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px;
         font-size: 12px; color: var(--muted); line-height: 1.3; }

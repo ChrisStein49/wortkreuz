@@ -17,15 +17,29 @@ interface Props {
   streak: number
   onOpen: (index: number) => void
   onRules: () => void
+  /** First-visit card suggesting the instructions, or null */
+  intro: { onShow: () => void; onSkip: () => void } | null
 }
 
-export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules }: Props) {
+export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules, intro }: Props) {
   // Suggest the first unsolved puzzle
   const suggested = progress.findIndex((p) => !p?.solved)
   return (
     <div className="screen overview">
       <h1 className="brand">{UI.appName}</h1>
       <div className="date">{UI.date(date)}</div>
+
+      {intro && (
+        <div className="intro-card">
+          <p>
+            <b>{UI.introTitle}</b> {UI.introText}
+          </p>
+          <div className="intro-actions">
+            <button type="button" className="btn primary" onClick={intro.onShow}>{UI.introShow}</button>
+            <button type="button" className="btn secondary" onClick={intro.onSkip}>{UI.introSkip}</button>
+          </div>
+        </div>
+      )}
 
       <div className="pills">
         <div className={`pill${streak > 0 ? ' on' : ''}`}>

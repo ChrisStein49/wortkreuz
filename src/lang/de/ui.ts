@@ -40,7 +40,12 @@ export const UI = {
   started: 'gestartet',
   streak: (n: number) => (n === 1 ? 'Tag in Folge' : 'Tage in Folge'),
   solvedToday: (min: number) => `heute gelöst · ab ${min} zählt der Tag`,
-  rules: 'Spielregeln',
+  rules: 'Anleitung',
+  // first-visit card on the overview
+  introTitle: '👋 Neu bei Wortkreuz?',
+  introText: 'So funktioniert’s.',
+  introShow: 'Anleitung ansehen',
+  introSkip: 'Überspringen',
   rulesTitle: 'So wird gespielt',
   rulesClose: 'Los geht’s',
   rulesGoal: 'Finde die fehlenden Buchstaben und das Lösungswort!',

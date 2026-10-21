@@ -22,19 +22,22 @@ export function solvedCount(date: string, puzzlesPerDay: number): number {
   return n
 }
 
-const RULES_SEEN = `${PREFIX}rulesSeen`
+// The first-visit card is done once the instructions were opened, skipped or
+// the first puzzle solved. (Key name kept from when the rules page opened
+// automatically, so players who saw it don't get the card.)
+const INTRO_DONE = `${PREFIX}rulesSeen`
 
-export function rulesSeen(): boolean {
+export function introDone(): boolean {
   try {
-    return localStorage.getItem(RULES_SEEN) === '1'
+    return localStorage.getItem(INTRO_DONE) === '1'
   } catch {
-    return true // can't remember it anyway: don't show the rules every time
+    return true // can't remember it anyway: don't show the card every time
   }
 }
 
-export function markRulesSeen() {
+export function markIntroDone() {
   try {
-    localStorage.setItem(RULES_SEEN, '1')
+    localStorage.setItem(INTRO_DONE, '1')
   } catch {
     // ignore
   }
