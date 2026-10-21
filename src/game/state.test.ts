@@ -57,6 +57,47 @@ describe('play state', () => {
     expect(s.wrong).toBe(false)
   })
 
+  it('opens the picker when tapping a solution goose that has no letter yet', () => {
+    // tile 0 is symbol 3 (A), still unassigned
+    const s = run([{ type: 'tapTile', tile: 0 }])
+    expect(s.selected).toBe(3)
+    expect(s.slots.every((t) => t === null)).toBe(true)
+  })
+
+  it('lays a solution tile once its goose has a letter', () => {
+    const s = run([{ type: 'select', symbol: 3 }, { type: 'assign', letter: 'A' }, { type: 'tapTile', tile: 0 }])
+    expect(s.slots[0]).toBe(0)
+    expect(s.selected).toBeNull()
+  })
+
+  it('takes a laid goose out of the word when it loses its letter', () => {
+    // A (symbol 3) laid in slot 0, N (symbol 2, tiles 1 and 5) in slots 1-2
+    const laid = run([
+      { type: 'select', symbol: 3 }, { type: 'assign', letter: 'A' },
+      { type: 'select', symbol: 2 }, { type: 'assign', letter: 'N' },
+      { type: 'tapTile', tile: 0 }, { type: 'tapTile', tile: 1 }, { type: 'tapTile', tile: 5 },
+    ])
+    expect(laid.slots.slice(0, 3)).toEqual([0, 1, 5])
+
+    // Reset N: both N tiles leave the word, A stays
+    const reset = run([{ type: 'select', symbol: 2 }, { type: 'clear' }], laid)
+    expect(reset.slots.slice(0, 3)).toEqual([0, null, null])
+
+    // Moving A to another goose takes the A tile out as well
+    const moved = run([{ type: 'select', symbol: 0 }, { type: 'assign', letter: 'A' }], laid)
+    expect(moved.slots.slice(0, 3)).toEqual([null, 1, 5])
+  })
+
+  it('takes a laid goose out of the word when a hint strikes its letter', () => {
+    const s = run([
+      { type: 'select', symbol: 3 }, { type: 'assign', letter: 'X' },
+      { type: 'tapTile', tile: 0 },
+      { type: 'hint', random: () => 0 },
+    ])
+    expect(s.struck).toEqual(['X'])
+    expect(s.slots[0]).toBeNull()
+  })
+
   it('shows tile letters once their symbol is assigned', () => {
     const s = run([{ type: 'select', symbol: 3 }, { type: 'assign', letter: 'A' }])
     expect(tileLetter(P, s, 0)).toBe('A')

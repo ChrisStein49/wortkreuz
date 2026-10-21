@@ -69,7 +69,21 @@ export function letterOwners(s: PlayState): Map<string, number> {
   return m
 }
 
-function settle(p: PlayPuzzle, s: PlayState): PlayState {
+function settle(p: PlayPuzzle, st: PlayState): PlayState {
+  // Only geese with a letter may sit in the word: one that lost its letter
+  // (reset, hint, letter moved to another goose) goes back to the tiles
+  const keep = (tile: number | null) => {
+    if (tile === null) return true
+    const t = p.solution.tiles[tile]
+    return !('symbol' in t) || st.assign[t.symbol] !== null
+  }
+  const s: PlayState = st.slots.every(keep)
+    ? st
+    : {
+        ...st,
+        slots: st.slots.map((t) => (keep(t) ? t : null)),
+        picked: st.picked !== null && keep(st.slots[st.picked]) ? st.picked : null,
+      }
   const allAssigned = s.assign.every((l) => l !== null)
   const allLaid = s.slots.every((t) => t !== null)
   if (!allAssigned || !allLaid) return { ...s, wrong: false }
@@ -115,6 +129,10 @@ export function reduce(p: PlayPuzzle, s: PlayState, a: Action): PlayState {
     }
     case 'tapTile': {
       if (s.slots.includes(a.tile)) return s
+      // A goose without a letter behaves like the geese in the grid: tapping
+      // it opens the letter picker for its colour instead of laying it
+      const t = p.solution.tiles[a.tile]
+      if ('symbol' in t && s.assign[t.symbol] === null) return { ...s, selected: t.symbol, picked: null }
       const target = s.picked !== null && s.slots[s.picked] === null ? s.picked : s.slots.indexOf(null)
       if (target < 0) return s
       const slots = [...s.slots]
