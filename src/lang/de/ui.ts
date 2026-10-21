@@ -26,8 +26,8 @@ export const UI = {
   today: 'heute',
   next: (n: number) => `Weiter zu Rätsel ${n}`,
   toOverview: 'Zur Übersicht',
-  share: 'Tagesergebnis teilen',
-  shareLater: (total: number) => `Sind alle ${total} gelöst, kannst du dein Tagesergebnis teilen.`,
+  share: 'Ergebnis teilen ➤',
+  shareLater: (total: number) => `Löse alle ${total}, um dein Ergebnis zu teilen.`,
   copied: 'In die Zwischenablage kopiert',
   /** One share per day: a square per puzzle (difficulty), totals of time and hints */
   shareDay: (date: string, r: DayResult) =>
@@ -40,6 +40,9 @@ export const UI = {
   started: 'gestartet',
   streak: (n: number) => (n === 1 ? 'Tag in Folge' : 'Tage in Folge'),
   solvedToday: (min: number) => `heute gelöst · ab ${min} zählt der Tag`,
+  solvedTodayAll: 'heute gelöst',
+  shareShort: 'Teilen',
+  copiedShort: 'Kopiert ✓',
   rules: 'Anleitung',
   // first-visit card on the overview
   introTitle: '👋 Neu bei Wortkreuz?',

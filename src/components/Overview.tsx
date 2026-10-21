@@ -1,8 +1,10 @@
 import type { Difficulty } from '../core/schedule.ts'
 import type { PlayPuzzle } from '../core/codec.ts'
 import type { DayResult } from '../game/dayResult.ts'
+import { shareText } from '../game/share.ts'
 import type { SavedProgress } from '../game/state.ts'
 import { STREAK_MIN_SOLVED } from '../game/streak.ts'
+import { useState } from 'react'
 import { CATEGORIES } from '../lang/de/index.ts'
 import { formatTime, UI } from '../lang/de/ui.ts'
 
@@ -24,6 +26,11 @@ interface Props {
 export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules, intro }: Props) {
   // Suggest the first unsolved puzzle
   const suggested = progress.findIndex((p) => !p?.solved)
+  const [copied, setCopied] = useState(false)
+  // Sharing from here too, for players who come back after finishing the day
+  const share = async () => {
+    if ((await shareText(UI.shareDay(UI.shortDate(date), day))) === 'copied') setCopied(true)
+  }
   return (
     <div className="screen overview">
       <h1 className="brand">{UI.appName}</h1>
@@ -46,9 +53,16 @@ export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules
           <b>🔥 {streak}</b>
           {UI.streak(streak)}
         </div>
-        <div className={`pill${day.solved >= STREAK_MIN_SOLVED ? ' on' : ''}`}>
-          <b>{day.solved} / {day.total}</b>
-          {UI.solvedToday(STREAK_MIN_SOLVED)}
+        <div className={`pill${day.solved >= STREAK_MIN_SOLVED ? ' on' : ''}${day.allSolved ? ' with-share' : ''}`}>
+          <span>
+            <b>{day.solved} / {day.total}</b>
+            {day.allSolved ? UI.solvedTodayAll : UI.solvedToday(STREAK_MIN_SOLVED)}
+          </span>
+          {day.allSolved && (
+            <button type="button" className="pill-share" onClick={share}>
+              {copied ? UI.copiedShort : UI.shareShort}
+            </button>
+          )}
         </div>
       </div>
 
@@ -80,7 +94,7 @@ export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules
       })}
 
       <div className="links">
-        <button type="button" onClick={onRules}>❔ {UI.rules}</button>
+        <button type="button" onClick={onRules}>📖 {UI.rules}</button>
       </div>
     </div>
   )

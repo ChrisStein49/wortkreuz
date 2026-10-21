@@ -2,6 +2,7 @@ import { useEffect, useReducer, useRef, useState } from 'react'
 import type { PlayPuzzle } from '../core/codec.ts'
 import type { Difficulty } from '../core/schedule.ts'
 import type { DayResult } from '../game/dayResult.ts'
+import { shareText } from '../game/share.ts'
 import { saveProgress, loadProgress } from '../game/storage.ts'
 import { initialState, reduce, toSaved, type Action, type PlayState } from '../game/state.ts'
 import { CATEGORIES } from '../lang/de/index.ts'
@@ -112,16 +113,7 @@ function Solved({ puzzle, state, categoryName, date, day, next, onBack }: Props 
   const time = formatTime(state.elapsedMs)
   const share = async () => {
     // one share per day, with the totals of all puzzles
-    const text = UI.shareDay(UI.shortDate(date), day)
-    try {
-      if (navigator.share) await navigator.share({ text })
-      else {
-        await navigator.clipboard.writeText(text)
-        setCopied(true)
-      }
-    } catch {
-      // share sheet dismissed: nothing to do
-    }
+    if ((await shareText(UI.shareDay(UI.shortDate(date), day))) === 'copied') setCopied(true)
   }
   return (
     <div className="solved">
@@ -136,15 +128,15 @@ function Solved({ puzzle, state, categoryName, date, day, next, onBack }: Props 
         <span>💡 {state.hintsUsed} {UI.hints(state.hintsUsed)}</span>
         <span>{day.solved} / {day.total} {UI.today}</span>
       </div>
+      {day.allSolved ? (
+        <button type="button" className="btn primary" onClick={share}>{copied ? UI.copied : UI.share}</button>
+      ) : (
+        <p className="share-later">{UI.shareLater(day.total)}</p>
+      )}
       {next ? (
         <button type="button" className="btn primary" onClick={next.open}>{UI.next(next.index + 1)}</button>
       ) : (
-        <button type="button" className="btn primary" onClick={onBack}>{UI.toOverview}</button>
-      )}
-      {day.allSolved ? (
-        <button type="button" className="btn secondary" onClick={share}>{copied ? UI.copied : UI.share}</button>
-      ) : (
-        <p className="share-later">{UI.shareLater(day.total)}</p>
+        <button type="button" className="btn secondary" onClick={onBack}>{UI.toOverview}</button>
       )}
     </div>
   )
