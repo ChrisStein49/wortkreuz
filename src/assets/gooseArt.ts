@@ -22,37 +22,43 @@ export const GEESE = [
   "name": "red",
   "body": "#d62828",
   "beak": "#f2a900",
-  "outline": "#6b1414"
+  "outline": "#6b1414",
+  "text": "#d62828"
  },
  {
   "name": "orange",
   "body": "#f28c00",
   "beak": "#a3520a",
-  "outline": "#794600"
+  "outline": "#794600",
+  "text": "#f28c00"
  },
  {
   "name": "green",
   "body": "#2e9e44",
   "beak": "#f2a900",
-  "outline": "#174f22"
+  "outline": "#174f22",
+  "text": "#2e9e44"
  },
  {
   "name": "blue",
   "body": "#1f5fd1",
   "beak": "#f2a900",
-  "outline": "#103069"
+  "outline": "#103069",
+  "text": "#1f5fd1"
  },
  {
   "name": "pink",
   "body": "#e85aa8",
   "beak": "#f2a900",
-  "outline": "#742d54"
+  "outline": "#742d54",
+  "text": "#e85aa8"
  },
  {
-  "name": "black",
-  "body": "#222222",
+  "name": "grey",
+  "body": "#9b9b9b",
   "beak": "#f2a900",
-  "outline": "#5c5c5c"
+  "outline": "#4e4e4e",
+  "text": "#6e6e6e"
  }
 ]
 

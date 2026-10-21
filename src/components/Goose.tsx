@@ -9,4 +9,5 @@ export const Goose = memo(function Goose({ symbol, className }: { symbol: number
   return <span className={`goose ${className ?? ''}`} dangerouslySetInnerHTML={{ __html: MARKUP[symbol] }} />
 })
 
-export const gooseColor = (symbol: number) => GEESE[symbol].body
+/** Colour for letters of this goose (readable on white) */
+export const gooseColor = (symbol: number) => GEESE[symbol].text

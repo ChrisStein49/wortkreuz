@@ -29,11 +29,9 @@ export function Board({ puzzle, state, onSelect }: Props) {
             aria-label={letter ? `Gans: ${letter}` : 'Gans'}
             aria-pressed={selected}
           >
+            {/* the letter's colour shows its goose, so no extra goose icon */}
             {letter ? (
-              <>
-                <span className="cell-letter" style={{ color: gooseColor(c.symbol) }}>{letter}</span>
-                <Goose symbol={c.symbol} className="badge" />
-              </>
+              <span className="cell-letter" style={{ color: gooseColor(c.symbol) }}>{letter}</span>
             ) : (
               <Goose symbol={c.symbol} />
             )}

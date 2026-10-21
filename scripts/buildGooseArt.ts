@@ -30,7 +30,9 @@ const art = {
 
 // The six goose colours (variant C, chosen 2026-10-19): body colour, orange
 // beak and feet, outline a darker shade of the body. The orange goose gets a
-// darker beak so it doesn't vanish; the black goose a grey outline.
+// darker beak so it doesn't vanish. Grey replaced black (2026-10-21) so its
+// letters can't be mistaken for printed ones; `text` is the letter colour,
+// darker than the grey body so it stays readable on white.
 const BEAK = '#f2a900'
 const darken = (hex: string, f: number) =>
   '#' + [1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * f).toString(16).padStart(2, '0')).join('')
@@ -40,8 +42,14 @@ const palette = [
   { name: 'green', body: '#2e9e44' },
   { name: 'blue', body: '#1f5fd1' },
   { name: 'pink', body: '#e85aa8' },
-  { name: 'black', body: '#222222', outline: '#5c5c5c' },
-].map((g) => ({ name: g.name, body: g.body, beak: g.beak ?? BEAK, outline: g.outline ?? darken(g.body, 0.5) }))
+  { name: 'grey', body: '#9b9b9b', text: '#6e6e6e' },
+].map((g) => ({
+  name: g.name,
+  body: g.body,
+  beak: g.beak ?? BEAK,
+  outline: darken(g.body, 0.5),
+  text: g.text ?? g.body,
+}))
 
 const fn = `/** Goose colours in symbol order (symbol 0 = red, ...) */
 export const GEESE = ${JSON.stringify(palette, null, 1)}
