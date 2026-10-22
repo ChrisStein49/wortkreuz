@@ -6,9 +6,11 @@ interface Props {
   puzzle: PlayPuzzle
   state: PlayState
   onSelect: (symbol: number) => void
+  /** Cells of correctly solved words, shown in green */
+  okCells?: ReadonlySet<number>
 }
 
-export function Board({ puzzle, state, onSelect }: Props) {
+export function Board({ puzzle, state, onSelect, okCells }: Props) {
   return (
     <div
       className="board"
@@ -17,14 +19,15 @@ export function Board({ puzzle, state, onSelect }: Props) {
     >
       {puzzle.cells.map((c, i) => {
         if (c.kind === 'blocked') return <div key={i} className="cell blocked" />
-        if (c.kind === 'given') return <div key={i} className="cell given">{c.letter}</div>
+        const ok = okCells?.has(i) ? ' ok' : ''
+        if (c.kind === 'given') return <div key={i} className={`cell given${ok}`}>{c.letter}</div>
         const letter = state.assign[c.symbol]
         const selected = state.selected === c.symbol
         return (
           <button
             key={i}
             type="button"
-            className={`cell symbol${selected ? ' selected' : ''}${letter ? ' filled' : ''}`}
+            className={`cell symbol${ok}${selected ? ' selected' : ''}${letter ? ' filled' : ''}`}
             onClick={() => !state.solved && onSelect(c.symbol)}
             aria-label={letter ? `Gans: ${letter}` : 'Gans'}
             aria-pressed={selected}

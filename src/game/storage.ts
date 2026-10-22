@@ -15,11 +15,9 @@ export function loadProgress(date: string, index: number): SavedProgress | null 
   }
 }
 
-/** Number of solved puzzles on a day */
-export function solvedCount(date: string, puzzlesPerDay: number): number {
-  let n = 0
-  for (let i = 0; i < puzzlesPerDay; i++) if (loadProgress(date, i)?.solved) n++
-  return n
+/** Saved progress of every puzzle of a day */
+export function loadDay(date: string, puzzlesPerDay: number): (SavedProgress | null)[] {
+  return Array.from({ length: puzzlesPerDay }, (_, i) => loadProgress(date, i))
 }
 
 // The first-visit card is done once the instructions were opened, skipped or

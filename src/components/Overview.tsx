@@ -21,9 +21,12 @@ interface Props {
   onRules: () => void
   /** First-visit card suggesting the instructions, or null */
   intro: { onShow: () => void; onSkip: () => void } | null
+  onArchive: () => void
+  /** Set when showing a past day from the archive */
+  archive: { onBack: () => void } | null
 }
 
-export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules, intro }: Props) {
+export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules, intro, onArchive, archive }: Props) {
   // Suggest the first unsolved puzzle
   const suggested = progress.findIndex((p) => !p?.solved)
   const [copied, setCopied] = useState(false)
@@ -33,10 +36,25 @@ export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules
   }
   return (
     <div className="screen overview">
-      <h1 className="brand">{UI.appName}</h1>
-      <div className="date">{UI.date(date)}</div>
+      {archive ? (
+        <>
+          <header className="bar">
+            <button type="button" className="back" onClick={archive.onBack} aria-label={UI.back}>‹</button>
+            <div className="bar-title">
+              {UI.date(date)}
+              <small>{UI.archiveLabel} · {day.solved} / {day.total} {UI.solvedCount}</small>
+            </div>
+          </header>
+          <p className="archive-note">{UI.archiveStreakNote}</p>
+        </>
+      ) : (
+        <>
+          <h1 className="brand">{UI.appName}</h1>
+          <div className="date">{UI.date(date)}</div>
+        </>
+      )}
 
-      {intro && (
+      {intro && !archive && (
         <div className="intro-card">
           <p>
             <b>{UI.introTitle}</b> {UI.introText}
@@ -48,6 +66,7 @@ export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules
         </div>
       )}
 
+      {!archive && (
       <div className="pills">
         <div className={`pill${streak > 0 ? ' on' : ''}`}>
           <b>🔥 {streak}</b>
@@ -65,6 +84,7 @@ export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules
           )}
         </div>
       </div>
+      )}
 
       {puzzles.map((puzzle, i) => {
         const p = progress[i]
@@ -94,6 +114,7 @@ export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules
       })}
 
       <div className="links">
+        {!archive && <button type="button" onClick={onArchive}>📅 {UI.archive}</button>}
         <button type="button" onClick={onRules}>📖 {UI.rules}</button>
       </div>
     </div>

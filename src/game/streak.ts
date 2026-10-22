@@ -5,6 +5,15 @@
 export const STREAK_MIN_SOLVED = 3
 
 /**
+ * Puzzles of `day` that count for the streak: solved on that very day.
+ * Replays from the archive don't count. Progress saved before solvedOn
+ * existed counts as on time.
+ */
+export function solvedOnTime(day: string, progress: readonly ({ solved: boolean; solvedOn?: string } | null)[]): number {
+  return progress.filter((p) => p?.solved && (p.solvedOn ?? day) === day).length
+}
+
+/**
  * @param today local calendar date
  * @param solvedOn number of puzzles solved on a given day (YYYY-MM-DD)
  * @param firstDay earliest day that can count (calendar start)

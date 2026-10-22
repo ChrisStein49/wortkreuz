@@ -19,8 +19,11 @@ export interface PlayState {
   picked: number | null
   elapsedMs: number
   solved: boolean
-  /** Everything filled in but something is wrong */
-  wrong: boolean
+  /**
+   * All geese right and the word fully laid, but in the wrong order. Wrong
+   * letters aren't flagged here: the words that stay white show those.
+   */
+  wrongOrder: boolean
 }
 
 export type Action =
@@ -34,7 +37,10 @@ export type Action =
   | { type: 'tick'; ms: number }
 
 /** Progress worth keeping between sessions */
-export type SavedProgress = Pick<PlayState, 'assign' | 'struck' | 'hintsUsed' | 'slots' | 'elapsedMs' | 'solved'>
+export type SavedProgress = Pick<PlayState, 'assign' | 'struck' | 'hintsUsed' | 'slots' | 'elapsedMs' | 'solved'> & {
+  /** Day (YYYY-MM-DD) the puzzle was solved on; differs from its own day when replayed from the archive */
+  solvedOn?: string
+}
 
 export function initialState(p: PlayPuzzle, saved?: SavedProgress | null): PlayState {
   const fresh: PlayState = {
@@ -46,7 +52,7 @@ export function initialState(p: PlayPuzzle, saved?: SavedProgress | null): PlayS
     picked: null,
     elapsedMs: 0,
     solved: false,
-    wrong: false,
+    wrongOrder: false,
   }
   if (!saved || saved.assign.length !== p.key.length || saved.slots.length !== p.solution.tiles.length) return fresh
   return { ...fresh, ...saved }
@@ -60,6 +66,32 @@ export function givenLetters(p: PlayPuzzle): Set<string> {
 export function tileLetter(p: PlayPuzzle, s: PlayState, tile: number): string | null {
   const t = p.solution.tiles[tile]
   return 'symbol' in t ? s.assign[t.symbol] : t.letter
+}
+
+/** Cell indices of each word: every full row and column without blocked cells */
+export function wordSlots(p: PlayPuzzle): number[][] {
+  const lines: number[][] = []
+  for (let i = 0; i < p.size; i++) {
+    lines.push(Array.from({ length: p.size }, (_, k) => i * p.size + k)) // row
+    lines.push(Array.from({ length: p.size }, (_, k) => k * p.size + i)) // column
+  }
+  return lines.filter((cells) => cells.every((c) => p.cells[c].kind !== 'blocked'))
+}
+
+/**
+ * Cells of words whose geese all carry the right letter: shown in green as
+ * a reward. Only complete, correct words count; wrong ones aren't flagged.
+ */
+export function correctWordCells(p: PlayPuzzle, s: PlayState): Set<number> {
+  const ok = new Set<number>()
+  for (const cells of wordSlots(p)) {
+    const right = cells.every((c) => {
+      const cell = p.cells[c]
+      return cell.kind !== 'symbol' || s.assign[cell.symbol] === p.key[cell.symbol]
+    })
+    if (right) cells.forEach((c) => ok.add(c))
+  }
+  return ok
 }
 
 /** Which symbol currently holds each letter */
@@ -86,11 +118,11 @@ function settle(p: PlayPuzzle, st: PlayState): PlayState {
       }
   const allAssigned = s.assign.every((l) => l !== null)
   const allLaid = s.slots.every((t) => t !== null)
-  if (!allAssigned || !allLaid) return { ...s, wrong: false }
+  if (!allAssigned || !allLaid) return { ...s, wrongOrder: false }
   const keyOk = s.assign.every((l, i) => l === p.key[i])
   const word = s.slots.map((t) => tileLetter(p, s, t!)).join('')
   const solved = keyOk && word === p.solution.word
-  return { ...s, solved, wrong: !solved, selected: solved ? null : s.selected, picked: solved ? null : s.picked }
+  return { ...s, solved, wrongOrder: keyOk && !solved, selected: solved ? null : s.selected, picked: solved ? null : s.picked }
 }
 
 export function reduce(p: PlayPuzzle, s: PlayState, a: Action): PlayState {

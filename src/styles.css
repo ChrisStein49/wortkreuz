@@ -16,6 +16,7 @@
   --glow: #ffd23f;
   --glow-soft: #fff8dc;
   --ok: #2e9e44;
+  --ok-soft: #d3ecd8; /* background of correctly solved words */
   --warn: #b3261e;
 
   /* The grid must stay above the open letter picker (~232px) and the top bar
@@ -45,6 +46,7 @@ button:disabled { cursor: default; }
 .cell { border: 0; padding: 0; background: var(--cell); display: grid; place-items: center; position: relative; min-width: 0;
         font: 400 calc(var(--board) / 7) 'Arbutus Slab', Georgia, serif; line-height: 1; }
 .cell.blocked { background: var(--blocked); }
+.cell.ok { background: var(--ok-soft); transition: background-color .3s; }
 .cell.symbol .goose { width: 82%; height: 82%; }
 .cell.selected { background: var(--glow-soft); box-shadow: inset 0 0 0 4px var(--glow); }
 .goose { display: block; line-height: 0; }
@@ -92,14 +94,26 @@ button:disabled { cursor: default; }
 .key.current { outline: 3px solid var(--glow); }
 .key.wide { flex: 0 1 74px; font-size: 13px; }
 
-/* solved */
+/* solved: same layout as playing, grid on top and solution word below */
 .solved { display: flex; flex-direction: column; align-items: center; text-align: center; }
-.solved-title { color: var(--ok); font-weight: 600; }
-.solved-word { font: 400 34px 'Arbutus Slab', Georgia, serif; letter-spacing: 3px; margin: 8px 0 2px; }
-.solved-cat { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
-/* No picker here, so the solved grid gets as much room as the screen allows
-   next to the word and the buttons (~340px). */
-.mini-board { --board: max(200px, min(calc(100vw - 32px), 360px, calc(100dvh - 340px))); pointer-events: none; }
+.solved-board { pointer-events: none; }
+/* sized from the grid width so even 9 letters fit one row on small phones */
+.solved-word { display: flex; justify-content: center; gap: 5px; margin: 16px 0 6px; }
+.solved-letter { min-width: min(34px, calc((var(--board) - 40px) / 9)); padding-bottom: 2px; border-bottom: 3px solid var(--ok);
+                 font: 400 min(30px, calc(var(--board) / 12)) 'Arbutus Slab', Georgia, serif; line-height: 1.2; }
+.solved-title { color: var(--ok); font-weight: 700; font-size: 15px; }
+.solved-cat { color: var(--muted); font-weight: 500; }
+
+/* brief glow at the moment of solving */
+.solved.celebrate .solved-board .board { animation: board-glow 1.1s ease-out; }
+.solved.celebrate .solved-board .cell:not(.blocked) { animation: cell-glow 1.1s ease-out; }
+.solved.celebrate .solved-letter { animation: letter-pop .45s ease-out backwards; }
+@keyframes board-glow { 0% { box-shadow: 0 0 0 0 rgba(46, 158, 68, .55); } 40% { box-shadow: 0 0 22px 6px rgba(46, 158, 68, .45); } 100% { box-shadow: 0 0 0 0 rgba(46, 158, 68, 0); } }
+@keyframes cell-glow { 0%, 30% { background: var(--ok-soft); } 100% { background: var(--cell); } }
+@keyframes letter-pop { 0% { opacity: 0; transform: translateY(8px) scale(.7); } 70% { transform: translateY(0) scale(1.12); } 100% { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .solved.celebrate .solved-board .board, .solved.celebrate .solved-board .cell, .solved.celebrate .solved-letter { animation: none; }
+}
 .result-line { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 16px; margin: 14px 0 18px;
                font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .btn { width: 100%; border-radius: 14px; padding: 13px; font-weight: 700; font-size: 15px; margin-bottom: 10px; border: 0; }
@@ -143,3 +157,9 @@ button:disabled { cursor: default; }
 .rules-list { padding-left: 22px; margin: 0 0 20px; line-height: 1.5; font-size: 15px; }
 .rules-list li { margin-bottom: 10px; }
 .no-puzzles { color: var(--muted); text-align: center; margin-top: 40vh; }
+
+/* archive */
+.archive-intro { color: var(--muted); font-size: 15px; line-height: 1.45; margin: 0 0 14px; }
+.archive-note { color: var(--muted); font-size: 13px; margin: -4px 0 14px; }
+.card.day .card-info { font-weight: 600; }
+.card.day.done .card-right { color: var(--ok); font-weight: 600; }

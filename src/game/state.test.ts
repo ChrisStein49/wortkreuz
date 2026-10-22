@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { unpackPuzzle } from '../core/codec.ts'
-import { initialState, MAX_HINTS, reduce, tileLetter, type Action, type PlayState } from './state.ts'
+import { correctWordCells, initialState, MAX_HINTS, reduce, tileLetter, wordSlots, type Action, type PlayState } from './state.ts'
 
 // Newsletter example: 0=R 1=I 2=N 3=A 4=U 5=G 6=K; tiles A N U G R N
 const P = unpackPuzzle('P012Z3.M.42OME21.4.5632TE|RINAUGK|324502|UNGARN|country')
@@ -37,14 +37,21 @@ describe('play state', () => {
     expect(wordOnly.solved).toBe(false)
     const both = run([...assignAll(), ...layWord()])
     expect(both.solved).toBe(true)
-    expect(both.wrong).toBe(false)
+    expect(both.wrongOrder).toBe(false)
   })
 
-  it('flags a complete but wrong solution', () => {
+  it('flags a wrong order when all letters are right and the word is laid', () => {
     // swap N and A in the word: NAUGRN
     const s = run([...assignAll(), ...[1, 0, 2, 3, 4, 5].map((tile) => ({ type: 'tapTile', tile }) as Action)])
     expect(s.solved).toBe(false)
-    expect(s.wrong).toBe(true)
+    expect(s.wrongOrder).toBe(true)
+  })
+
+  it('does not flag a wrong letter (the white words show it)', () => {
+    // everything filled, word in the right order, but K (symbol 6) wrong
+    const s = run([...assignAll(), { type: 'select', symbol: 6 }, { type: 'assign', letter: 'X' }, ...layWord()])
+    expect(s.solved).toBe(false)
+    expect(s.wrongOrder).toBe(false)
   })
 
   it('swaps two laid letters in one move and returns a letter on second tap', () => {
@@ -54,7 +61,7 @@ describe('play state', () => {
     // NAUGRN -> ANUGRN, still wrong (needs UNGARN) but swapped correctly
     s = run([{ type: 'tapSlot', slot: 2 }, { type: 'tapSlot', slot: 2 }], s)
     expect(s.slots[2]).toBeNull()
-    expect(s.wrong).toBe(false)
+    expect(s.wrongOrder).toBe(false)
   })
 
   it('opens the picker when tapping a solution goose that has no letter yet', () => {
@@ -96,6 +103,29 @@ describe('play state', () => {
     ])
     expect(s.struck).toEqual(['X'])
     expect(s.slots[0]).toBeNull()
+  })
+
+  it('finds the six words of the grid', () => {
+    expect(wordSlots(P)).toHaveLength(6)
+  })
+
+  it('marks a word green only when all its geese are right', () => {
+    // PRINZ (row 0) needs R I N; PANIK (column 0) needs A N I K
+    const partial = run([
+      { type: 'select', symbol: 0 }, { type: 'assign', letter: 'R' },
+      { type: 'select', symbol: 1 }, { type: 'assign', letter: 'I' },
+    ])
+    expect(correctWordCells(P, partial).size).toBe(0)
+
+    // with N, PRINZ (row 0) is complete – and so is NOMEN (row 2), whose only goose is N
+    const prinz = run([{ type: 'select', symbol: 2 }, { type: 'assign', letter: 'N' }], partial)
+    expect([...correctWordCells(P, prinz)].sort((a, b) => a - b)).toEqual([0, 1, 2, 3, 4, 10, 11, 12, 13, 14])
+
+    // a wrong letter elsewhere doesn't affect PRINZ; a wrong letter in it removes the mark
+    const wrongK = run([{ type: 'select', symbol: 6 }, { type: 'assign', letter: 'X' }], prinz)
+    expect(correctWordCells(P, wrongK).has(0)).toBe(true)
+    const wrongN = run([{ type: 'select', symbol: 2 }, { type: 'assign', letter: 'B' }], prinz)
+    expect(correctWordCells(P, wrongN).size).toBe(0)
   })
 
   it('shows tile letters once their symbol is assigned', () => {

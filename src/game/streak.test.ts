@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { currentStreak } from './streak.ts'
+import { currentStreak, solvedOnTime } from './streak.ts'
+
+describe('solvedOnTime', () => {
+  it('counts only puzzles solved on their own day', () => {
+    const progress = [
+      { solved: true, solvedOn: '2026-10-19' }, // on time
+      { solved: true }, // saved before solvedOn existed: on time
+      { solved: true, solvedOn: '2026-10-21' }, // replayed from the archive
+      { solved: false },
+      null,
+    ]
+    expect(solvedOnTime('2026-10-19', progress)).toBe(2)
+  })
+})
 
 const TODAY = new Date(2026, 9, 20, 15, 0)
 const FIRST = '2026-10-01'
