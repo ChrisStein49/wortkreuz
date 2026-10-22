@@ -1,0 +1,4 @@
+# Cloudflare Pages: keep the test deployment out of search engines
+# (same as the [[headers]] block in netlify.toml)
+/*
+  X-Robots-Tag: noindex, nofollow

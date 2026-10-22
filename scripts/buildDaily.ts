@@ -1,8 +1,12 @@
 // Builds or extends the daily calendar in src/data/daily-de.json.
-//   npm run build-daily -- [days] [--start YYYY-MM-DD]
+//   npm run build-daily -- [days] [--start YYYY-MM-DD] [--from YYYY-MM-DD] [--out file]
 // Appends `days` new days (default 365) after the last existing day; days
 // already in the calendar are never changed, so the archive stays stable.
 // --start only applies when the calendar doesn't exist yet (default: today).
+// --from regenerates from that date on (e.g. after word list changes): days
+//   before it are kept, later ones rebuilt; `days` then defaults to restoring
+//   the previous length. Never use a date that players may already have played.
+// --out writes somewhere else (e.g. a preview) instead of the real calendar.
 //
 // Rules: the weekday/weekend difficulty curve (src/core/schedule.ts), five
 // different categories per day, and solution words / grid words spaced out as
@@ -35,15 +39,28 @@ const ROOT = join(import.meta.dirname, '..')
 const CALENDAR_FILE = join(ROOT, 'src', 'data', 'daily-de.json')
 
 const args = process.argv.slice(2)
-const startFlag = args.indexOf('--start')
-const startArg = startFlag >= 0 ? args.splice(startFlag, 2)[1] : undefined
-const newDays = Number(args[0] ?? 365)
+const flag = (name: string) => {
+  const i = args.indexOf(name)
+  return i >= 0 ? args.splice(i, 2)[1] : undefined
+}
+const startArg = flag('--start')
+const fromArg = flag('--from')
+const outArg = flag('--out')
+const OUT_FILE = outArg ? join(process.cwd(), outArg) : CALENDAR_FILE
 
 const calendar: Calendar = existsSync(CALENDAR_FILE)
   ? JSON.parse(readFileSync(CALENDAR_FILE, 'utf8'))
   : { start: startArg ?? toIsoDate(new Date()), days: [] }
 if (startArg && calendar.days.length && startArg !== calendar.start)
   console.warn(`calendar already starts ${calendar.start}; --start ignored`)
+const previousLength = calendar.days.length
+if (fromArg) {
+  const keep = Math.round((fromIsoDate(fromArg).getTime() - fromIsoDate(calendar.start).getTime()) / 86_400_000)
+  if (keep < 0 || keep > calendar.days.length) throw new Error(`--from ${fromArg} is outside the calendar`)
+  calendar.days = calendar.days.slice(0, keep)
+  console.log(`keeping ${keep} days, regenerating from ${fromArg}`)
+}
+const newDays = Number(args[0] ?? (fromArg ? previousLength - calendar.days.length : 365))
 
 // Last day each solution word / grid word was used
 const lastSolution = new Map<string, number>()
@@ -110,9 +127,9 @@ for (let day = firstNew; day < firstNew + newDays; day++) {
   }
 }
 
-mkdirSync(join(ROOT, 'src', 'data'), { recursive: true })
+mkdirSync(join(OUT_FILE, '..'), { recursive: true })
 writeFileSync(
-  CALENDAR_FILE,
+  OUT_FILE,
   `{"start":"${calendar.start}","days":[\n${calendar.days.map((d) => JSON.stringify(d)).join(',\n')}\n]}\n`,
 )
 mkdirSync(join(ROOT, 'scripts', 'out'), { recursive: true })

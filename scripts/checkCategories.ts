@@ -9,6 +9,7 @@ let problems = 0
 for (const c of CATEGORIES) {
   const bad = c.words.filter((w) => !/^[A-Z]+$/.test(w))
   const dup = c.words.filter((w, i) => c.words.indexOf(w) !== i)
+  const unknownLess = (c.lessKnown ?? []).filter((w) => !c.words.includes(w))
   const bySorted = new Map<string, string[]>()
   for (const w of c.words) {
     const k = [...w].sort().join('')
@@ -16,10 +17,12 @@ for (const c of CATEGORIES) {
   }
   const anagrams = [...bySorted.values()].filter((v) => v.length > 1)
   total += c.words.length
-  problems += bad.length + dup.length
+  problems += bad.length + dup.length + unknownLess.length
   const notes = [
     bad.length ? `not A-Z: ${bad}` : '',
     dup.length ? `duplicates: ${dup}` : '',
+    unknownLess.length ? `lessKnown not in words: ${unknownLess}` : '',
+    c.lessKnown ? `well-known ${c.words.length - c.lessKnown.length}` : '',
     anagrams.length ? `anagrams (skipped): ${anagrams.map((a) => a.join('/')).join(', ')}` : '',
   ].filter(Boolean)
   console.log(`${c.id.padEnd(11)} ${String(c.words.length).padStart(3)}  ${notes.join('; ')}`)

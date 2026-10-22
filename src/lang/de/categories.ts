@@ -24,6 +24,14 @@ export const CATEGORIES: readonly Category[] = [
       'SPANIEN', 'SUDAN', 'SURINAME', 'SYRIEN', 'TAIWAN', 'TANSANIA', 'THAILAND', 'TOGO', 'TONGA',
       'TSCHAD', 'TUNESIEN', 'TUVALU', 'UGANDA', 'UNGARN', 'URUGUAY', 'VIETNAM', 'ZYPERN',
     ],
+    lessKnown: [
+      'ANDORRA', 'ARMENIEN', 'BAHRAIN', 'BARBADOS', 'BELARUS', 'BELIZE', 'BENIN', 'BHUTAN',
+      'BOTSUANA', 'BURUNDI', 'ERITREA', 'FIDSCHI', 'GABUN', 'GAMBIA', 'GEORGIEN', 'GRENADA',
+      'GUINEA', 'GUYANA', 'KATAR', 'KOSOVO', 'KUWAIT', 'LAOS', 'LESOTHO', 'LIBERIA', 'MALAWI',
+      'MALI', 'MOLDAU', 'MONGOLEI', 'MYANMAR', 'NAMIBIA', 'NAURU', 'NIGER', 'OMAN', 'PALAU',
+      'PARAGUAY', 'RUANDA', 'SAMBIA', 'SAMOA', 'SENEGAL', 'SIMBABWE', 'SOMALIA', 'SUDAN',
+      'SURINAME', 'TANSANIA', 'TOGO', 'TONGA', 'TSCHAD', 'TUVALU', 'UGANDA', 'URUGUAY',
+    ],
   },
   {
     id: 'capital',
@@ -33,13 +41,19 @@ export const CATEGORIES: readonly Category[] = [
       'ABUJA', 'ACCRA', 'ALGIER', 'AMMAN', 'AMSTERDAM', 'ANKARA', 'ASTANA', 'ATHEN', 'BAGDAD',
       'BAKU', 'BANGKOK', 'BEIRUT', 'BELGRAD', 'BERLIN', 'BERN', 'BOGOTA', 'BRASILIA', 'BUDAPEST',
       'BUKAREST', 'CANBERRA', 'CARACAS', 'COLOMBO', 'DAKAR', 'DAMASKUS', 'DHAKA', 'DOHA', 'DUBLIN',
-      'ERIWAN', 'HANOI', 'HARARE', 'HAVANNA', 'HELSINKI', 'JAKARTA', 'JERUSALEM', 'KABUL', 'KAIRO',
-      'KAMPALA', 'KATHMANDU', 'KIEW', 'KIGALI', 'LIMA', 'LISSABON', 'LONDON', 'LUANDA', 'LUSAKA',
+      'ERIWAN', 'HANOI', 'HARARE', 'HAVANNA', 'HELSINKI', 'JAKARTA', 'KABUL', 'KAIRO',
+      'KAMPALA', 'KATHMANDU', 'KIGALI', 'LIMA', 'LISSABON', 'LONDON', 'LUANDA', 'LUSAKA',
       'MADRID', 'MANILA', 'MAPUTO', 'MASKAT', 'MINSK', 'MOSKAU', 'NAIROBI', 'NIKOSIA', 'OSLO',
       'OTTAWA', 'PARIS', 'PEKING', 'PRAG', 'QUITO', 'RABAT', 'RIAD', 'RIGA', 'SANAA', 'SANTIAGO',
       'SARAJEVO', 'SEOUL', 'SKOPJE', 'SOFIA', 'STOCKHOLM', 'TALLINN', 'TASCHKENT', 'TEHERAN',
-      'TIFLIS', 'TIRANA', 'TOKIO', 'TUNIS', 'VADUZ', 'VALLETTA', 'VILNIUS', 'WARSCHAU', 'WIEN',
+      'TIFLIS', 'TIRANA', 'TOKIO', 'TUNIS', 'VADUZ', 'VALLETTA', 'WARSCHAU', 'WIEN',
       'ZAGREB',
+    ],
+    lessKnown: [
+      'ABUJA', 'ACCRA', 'ALGIER', 'AMMAN', 'ASTANA', 'BAKU', 'BOGOTA', 'CARACAS', 'COLOMBO',
+      'DAKAR', 'DHAKA', 'DOHA', 'ERIWAN', 'HANOI', 'HARARE', 'JAKARTA', 'KAMPALA', 'KATHMANDU',
+      'KIGALI', 'LUANDA', 'LUSAKA', 'MANILA', 'MAPUTO', 'MASKAT', 'NIKOSIA', 'QUITO', 'RABAT',
+      'RIAD', 'SANAA', 'SKOPJE', 'TASCHKENT', 'TIFLIS', 'TIRANA', 'VALLETTA',
     ],
   },
   {
@@ -51,6 +65,9 @@ export const CATEGORIES: readonly Category[] = [
       'ERDBEERE', 'FEIGE', 'GUAVE', 'HIMBEERE', 'KIRSCHE', 'KIWI', 'KOKOSNUSS', 'LIMETTE',
       'LITSCHI', 'MANDARINE', 'MANGO', 'MARACUJA', 'MARILLE', 'MELONE', 'MIRABELLE', 'NEKTARINE',
       'ORANGE', 'PAPAYA', 'PFIRSICH', 'PFLAUME', 'QUITTE', 'TRAUBE', 'ZITRONE', 'ZWETSCHGE',
+    ],
+    lessKnown: [
+      'GUAVE', 'LITSCHI', 'MARACUJA', 'MIRABELLE', 'PAPAYA', 'QUITTE',
     ],
   },
   {
@@ -69,6 +86,9 @@ export const CATEGORIES: readonly Category[] = [
       'SPINNE', 'STORCH', 'TAUBE', 'TIGER', 'WESPE', 'WIESEL', 'WOLF', 'WURM', 'ZEBRA',
       'ZIEGE',
     ],
+    lessKnown: [
+      'ALPAKA', 'BISON', 'GEPARD', 'HERMELIN', 'KRANICH', 'MARDER', 'REIHER', 'WIESEL',
+    ],
   },
   {
     id: 'body',
@@ -82,6 +102,9 @@ export const CATEGORIES: readonly Category[] = [
       'NIERE', 'OHR', 'RIPPE', 'SCHULTER', 'SEHNE', 'STIRN', 'VENE', 'WADE', 'WANGE', 'WIMPER',
       'ZAHN', 'ZEHE', 'ZUNGE',
     ],
+    lessKnown: [
+      'ACHSEL', 'ADER', 'BRAUE', 'GAUMEN', 'MANDEL', 'MILZ', 'SEHNE', 'VENE',
+    ],
   },
   {
     id: 'vegetable',
@@ -92,6 +115,9 @@ export const CATEGORIES: readonly Category[] = [
       'LAUCH', 'MAIS', 'PAPRIKA', 'RETTICH', 'SALAT', 'SELLERIE', 'SPARGEL', 'SPINAT', 'TOMATE',
       'ZUCCHINI', 'ZWIEBEL',
     ],
+    lessKnown: [
+      'FENCHEL', 'RETTICH',
+    ],
   },
   {
     id: 'instrument',
@@ -100,6 +126,9 @@ export const CATEGORIES: readonly Category[] = [
     words: [
       'CELLO', 'GEIGE', 'GITARRE', 'HARFE', 'HORN', 'KLAVIER', 'OBOE', 'ORGEL', 'POSAUNE',
       'SAXOPHON', 'TROMMEL', 'TROMPETE', 'TUBA', 'ZITHER',
+    ],
+    lessKnown: [
+      'OBOE', 'ZITHER',
     ],
   },
   {
@@ -112,6 +141,9 @@ export const CATEGORIES: readonly Category[] = [
       'MARATHON', 'POLO', 'RINGEN', 'RODELN', 'RUDERN', 'RUGBY', 'SCHACH', 'SEGELN', 'SLALOM',
       'SQUASH', 'SUMO', 'SURFEN', 'TENNIS', 'TRIATHLON', 'TURNEN',
     ],
+    lessKnown: [
+      'BIATHLON', 'CRICKET', 'CURLING', 'POLO', 'SLALOM', 'SQUASH', 'SUMO',
+    ],
   },
   {
     id: 'kitchen',
@@ -122,6 +154,9 @@ export const CATEGORIES: readonly Category[] = [
       'KANNE', 'KELLE', 'KESSEL', 'KRUG', 'MESSER', 'MIXER', 'NUDELHOLZ', 'OFEN', 'PFANNE', 'REIBE',
       'SCHALE', 'SERVIETTE', 'SIEB', 'SPATEL', 'TABLETT', 'TASSE', 'TELLER', 'TOASTER', 'TOPF',
       'TRICHTER', 'WAAGE', 'WOK', 'ZANGE',
+    ],
+    lessKnown: [
+      'SPATEL', 'TRICHTER',
     ],
   },
   {
@@ -134,6 +169,9 @@ export const CATEGORIES: readonly Category[] = [
       'LEDERHOSE', 'MANTEL', 'OVERALL', 'PANTOFFEL', 'PARKA', 'PONCHO', 'PULLOVER', 'PYJAMA',
       'ROCK', 'SAKKO', 'SANDALE', 'SCHAL', 'SCHUH', 'SHORTS', 'SOCKE', 'STIEFEL', 'STRUMPF',
       'TRACHT', 'TUNIKA', 'UMHANG', 'WESTE',
+    ],
+    lessKnown: [
+      'BLAZER', 'KORSETT', 'PARKA', 'PONCHO', 'TUNIKA', 'UMHANG',
     ],
   },
   {
@@ -151,6 +189,9 @@ export const CATEGORIES: readonly Category[] = [
       // other plants
       'BAMBUS', 'DISTEL', 'EFEU', 'FARN', 'GINSTER', 'HOLUNDER', 'KAKTUS', 'KLEE', 'MISTEL',
       'MOOS', 'ROSMARIN', 'SALBEI', 'SCHILF', 'THYMIAN',
+    ],
+    lessKnown: [
+      'EIBE', 'ERLE', 'ESCHE', 'GINSTER', 'MISTEL', 'SCHILF', 'ULME', 'ZEDER',
     ],
   },
   // Small categories: easier anagrams

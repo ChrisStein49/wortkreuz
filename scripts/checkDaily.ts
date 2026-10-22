@@ -12,7 +12,9 @@ import { dailyDifficulties } from '../src/core/schedule.ts'
 import { countSolutions, type Pattern } from '../src/core/solver.ts'
 import { CATEGORIES } from '../src/lang/de/index.ts'
 
-const calendar: Calendar = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'src', 'data', 'daily-de.json'), 'utf8'))
+// optional argument: another calendar file (e.g. a preview)
+const calendarPath = process.argv[2] ? join(process.cwd(), process.argv[2]) : join(import.meta.dirname, '..', 'src', 'data', 'daily-de.json')
+const calendar: Calendar = JSON.parse(readFileSync(calendarPath, 'utf8'))
 const VALID = words5.map((w) => w.word)
 const gridOk = new Set(words5.filter((w) => w.grid).map((w) => w.word))
 const categoryWords = new Map(CATEGORIES.map((c) => [c.id, new Set(c.words)]))

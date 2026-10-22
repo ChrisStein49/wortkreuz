@@ -10,11 +10,11 @@ import { ALPHABET, CATEGORIES, LANG } from '../src/lang/de/index.ts'
 
 type Preset = Pick<
   GeneratorOptions,
-  'maxWordRank' | 'symbols' | 'minGivenCells' | 'requireForced' | 'maxPlainSolutionLetters' | 'solutionLength'
+  'maxWordRank' | 'symbols' | 'minGivenCells' | 'requireForced' | 'maxPlainSolutionLetters' | 'solutionLength' | 'wellKnownSolutionsOnly'
 >
 
 const PRESETS: Record<Difficulty, Preset> = {
-  easy: { maxWordRank: 400, symbols: { min: 4, max: 5 }, minGivenCells: 10, requireForced: true, maxPlainSolutionLetters: 2, solutionLength: { min: 4, max: 7 } },
+  easy: { maxWordRank: 400, symbols: { min: 4, max: 5 }, minGivenCells: 10, requireForced: true, maxPlainSolutionLetters: 2, solutionLength: { min: 4, max: 7 }, wellKnownSolutionsOnly: true },
   medium: { maxWordRank: 650, symbols: { min: 5, max: 6 }, minGivenCells: 8, requireForced: true, maxPlainSolutionLetters: 2, solutionLength: { min: 5, max: 8 } },
   hard: { maxWordRank: 900, symbols: { min: 6, max: 6 }, minGivenCells: 6, requireForced: false, maxPlainSolutionLetters: 2, solutionLength: { min: 5, max: 9 } },
 }

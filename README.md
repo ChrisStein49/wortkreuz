@@ -47,7 +47,19 @@ npm run build-daily -- 365      # append a year after the last existing day
 npx tsx scripts/checkDaily.ts   # re-verify every puzzle and print stats
 ```
 
-Existing days are never regenerated, so past days (the archive) stay
-stable. Each day uses five different categories; solution words are spaced
+Appending never touches existing days, so past days (the archive) stay
+stable. After word list changes, `npm run build-daily -- --from YYYY-MM-DD`
+regenerates from that date on – only use a date nobody has played yet. Each day uses five different categories; solution words are spaced
 at least 60 days apart where possible, grid words a few days apart.
 `scripts/out/daily.html` shows the first two weeks of each new batch.
+
+## Hosting
+
+A static site: `npm run build` produces `dist/`.
+
+- **Cloudflare Pages:** build command `npm run build`, output directory
+  `dist`; Node version from `.node-version`, headers from `public/_headers`.
+- **Netlify:** configured in `netlify.toml` (same build and headers).
+
+Test deployments send `X-Robots-Tag: noindex, nofollow` so search engines
+stay away until the app goes live.

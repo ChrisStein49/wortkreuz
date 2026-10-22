@@ -10,6 +10,8 @@ export interface Category {
   words: readonly string[]
   /** Few members: the anagram is quick to spot */
   easy?: boolean
+  /** Words fewer players know (e.g. HARARE): not used in easy puzzles */
+  lessKnown?: readonly string[]
 }
 
 export interface WordEntry {

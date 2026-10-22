@@ -60,6 +60,8 @@ export interface GeneratorOptions {
   /** Only accept puzzles that can be filled word by word without trying */
   requireForced: boolean
   solutionLength: { min: number; max: number }
+  /** Only well-known solution words (skip each category's lessKnown) */
+  wellKnownSolutionsOnly?: boolean
   /** Restrict to these category ids (default: all) */
   categoryIds?: readonly string[]
 }
@@ -90,6 +92,7 @@ export function prepare(opts: GeneratorOptions): Prepared {
     .flatMap((category) =>
       category.words
         .filter((w) => w.length >= opts.solutionLength.min && w.length <= opts.solutionLength.max)
+        .filter((w) => !opts.wellKnownSolutionsOnly || !category.lessKnown?.includes(w))
         // the anagram must point to one word only within its category
         .filter((w) => !category.words.some((o) => o !== w && sortLetters(o) === sortLetters(w)))
         .map((word) => ({ category, word, letters: new Set(word) })),
