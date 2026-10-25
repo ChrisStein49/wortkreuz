@@ -94,6 +94,29 @@ export function correctWordCells(p: PlayPuzzle, s: PlayState): Set<number> {
   return ok
 }
 
+// German letters from most to least common (no umlauts or ß in this game)
+const GERMAN_FREQUENCY = 'ENISRATDHULCGMOBWFKZPVJYXQ'
+
+/**
+ * Letters a hint strikes: half of the wrong letters still in the picker
+ * (rounded up). To keep it balanced, the wrong letters are ranked by German
+ * letter frequency and every other one is taken, so a hint removes common
+ * and rare letters alike, never only Q/X/Y and never all the likely ones.
+ * Wrong letters the player has already placed are always struck.
+ */
+export function hintStrikes(p: PlayPuzzle, s: PlayState, random: () => number): string[] {
+  const given = givenLetters(p)
+  const correct = new Set(p.key)
+  const wrong = [...GERMAN_FREQUENCY].filter((l) => !given.has(l) && !correct.has(l) && !s.struck.includes(l))
+  const count = Math.ceil(wrong.length / 2)
+  const owners = letterOwners(s)
+  const placed = wrong.filter((l) => owners.has(l))
+  const parity = random() < 0.5 ? 0 : 1
+  const alternate = wrong.filter((_, i) => i % 2 === parity && !owners.has(wrong[i]))
+  const rest = wrong.filter((l) => !placed.includes(l) && !alternate.includes(l))
+  return [...placed, ...alternate, ...rest].slice(0, Math.max(count, placed.length))
+}
+
 /** Which symbol currently holds each letter */
 export function letterOwners(s: PlayState): Map<string, number> {
   const m = new Map<string, number>()
@@ -147,17 +170,10 @@ export function reduce(p: PlayPuzzle, s: PlayState, a: Action): PlayState {
     }
     case 'hint': {
       if (s.hintsUsed >= MAX_HINTS) return s
-      const given = givenLetters(p)
-      const used = new Set(p.key)
-      const owners = letterOwners(s)
-      const candidates = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].filter((l) => !given.has(l) && !used.has(l) && !s.struck.includes(l))
-      if (candidates.length === 0) return s
-      // Prefer striking a wrong letter the player has already placed: that helps most
-      const placed = candidates.filter((l) => owners.has(l))
-      const pool = placed.length ? placed : candidates
-      const letter = pool[Math.floor((a.random ?? Math.random)() * pool.length)]
-      const assign = s.assign.map((l) => (l === letter ? null : l))
-      return settle(p, { ...s, assign, struck: [...s.struck, letter], hintsUsed: s.hintsUsed + 1 })
+      const strike = hintStrikes(p, s, a.random ?? Math.random)
+      if (strike.length === 0) return s
+      const assign = s.assign.map((l) => (l !== null && strike.includes(l) ? null : l))
+      return settle(p, { ...s, assign, struck: [...s.struck, ...strike], hintsUsed: s.hintsUsed + 1 })
     }
     case 'tapTile': {
       if (s.slots.includes(a.tile)) return s

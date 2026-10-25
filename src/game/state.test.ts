@@ -101,7 +101,7 @@ describe('play state', () => {
       { type: 'tapTile', tile: 0 },
       { type: 'hint', random: () => 0 },
     ])
-    expect(s.struck).toEqual(['X'])
+    expect(s.struck).toContain('X')
     expect(s.slots[0]).toBeNull()
   })
 
@@ -134,14 +134,28 @@ describe('play state', () => {
     expect(tileLetter(P, s, 1)).toBeNull()
   })
 
-  it('hints strike unused letters, prefer placed wrong ones, and stop after three', () => {
-    let s = run([{ type: 'select', symbol: 0 }, { type: 'assign', letter: 'X' }])
-    s = run([{ type: 'hint', random: () => 0 }], s)
-    expect(s.struck).toEqual(['X'])
+  // Example puzzle: printed P Z M O E T, correct R I N A U G K, so 13 wrong
+  // letters, ranked by frequency: S D H L C B W F V J Y X Q
+  it('a hint strikes half of the wrong letters, mixing common and rare ones', () => {
+    const s = run([{ type: 'hint', random: () => 0 }])
+    expect(s.struck).toEqual(['S', 'H', 'C', 'W', 'V', 'Y', 'Q']) // every other one, 7 of 13
+    const other = run([{ type: 'hint', random: () => 0.9 }])
+    expect(other.struck).toHaveLength(7) // 6 alternating + 1 more to reach half
+    for (const l of [...s.struck, ...other.struck]) expect(P.key).not.toContain(l)
+  })
+
+  it('a hint always strikes a wrong letter the player placed', () => {
+    const s = run([{ type: 'select', symbol: 0 }, { type: 'assign', letter: 'D' }, { type: 'hint', random: () => 0 }])
+    expect(s.struck).toContain('D')
+    expect(s.struck).toHaveLength(7)
     expect(s.assign[0]).toBeNull()
-    for (let i = 0; i < 5; i++) s = run([{ type: 'hint', random: () => 0.5 }], s)
+  })
+
+  it('three hints leave about one wrong letter and then stop', () => {
+    let s = initialState(P)
+    for (let i = 0; i < 5; i++) s = run([{ type: 'hint', random: () => 0 }], s)
     expect(s.hintsUsed).toBe(MAX_HINTS)
-    expect(s.struck).toHaveLength(MAX_HINTS)
+    expect(s.struck).toHaveLength(12) // 13 → 6 → 3 → 1 wrong letters left
     for (const l of s.struck) expect(P.key).not.toContain(l)
   })
 
