@@ -7,6 +7,10 @@ import { STREAK_MIN_SOLVED } from '../game/streak.ts'
 import { useState } from 'react'
 import { CATEGORIES } from '../lang/de/index.ts'
 import { formatTime, UI } from '../lang/de/ui.ts'
+import { Goose } from './Goose.tsx'
+
+/** The orange goose (symbol 1) is the app's mark */
+const BRAND_GOOSE = 1
 
 const CATEGORY_NAME = new Map(CATEGORIES.map((c) => [c.id, c.name]))
 const DOTS: Record<Difficulty, number> = { easy: 1, medium: 2, hard: 3 }
@@ -38,19 +42,26 @@ export function Overview({ date, puzzles, progress, day, streak, onOpen, onRules
     <div className="screen overview">
       {archive ? (
         <>
-          <header className="bar">
+          <header className="bar centered">
             <button type="button" className="back" onClick={archive.onBack} aria-label={UI.back}>‹</button>
             <div className="bar-title">
               {UI.date(date)}
               <small>{UI.archiveLabel} · {day.solved} / {day.total} {UI.solvedCount}</small>
             </div>
+            <span className="bar-spacer" aria-hidden="true" />
           </header>
           <p className="archive-note">{UI.archiveStreakNote}</p>
         </>
       ) : (
         <>
-          <h1 className="brand">{UI.appName}</h1>
-          <div className="date">{UI.date(date)}</div>
+          {/* the orange goose marks it as a ganzgraz puzzle (also the app icon) */}
+          <div className="brand-row">
+            <Goose symbol={BRAND_GOOSE} className="brand-goose" />
+            <div>
+              <h1 className="brand">{UI.appName}</h1>
+              <div className="date">{UI.date(date)}</div>
+            </div>
+          </div>
         </>
       )}
 

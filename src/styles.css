@@ -125,8 +125,10 @@ button:disabled { cursor: default; }
 .share-later { font-size: 13px; color: var(--muted); margin: 2px 0 12px; }
 
 /* day overview */
-.brand { font: 400 28px 'Arbutus Slab', Georgia, serif; margin: 8px 0 0; text-align: center; }
-.date { color: var(--muted); font-size: 14px; margin-bottom: 14px; text-align: center; }
+.brand-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 6px 0 14px; }
+.brand-goose { width: 44px; height: 50px; flex: none; }
+.brand { font: 400 28px 'Arbutus Slab', Georgia, serif; margin: 0; text-align: center; line-height: 1.15; }
+.date { color: var(--muted); font-size: 14px; text-align: center; }
 .intro-card { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
 .intro-card p { margin: 0 0 10px; font-size: 15px; }
 .intro-actions { display: flex; gap: 8px; }
@@ -162,7 +164,8 @@ button:disabled { cursor: default; }
 .no-puzzles { color: var(--muted); text-align: center; margin-top: 40vh; }
 
 /* archive */
-.archive-intro { color: var(--muted); font-size: 15px; line-height: 1.45; margin: 0 0 14px; }
-.archive-note { color: var(--muted); font-size: 13px; margin: -4px 0 14px; }
-.card.day .card-info { font-weight: 600; }
-.card.day.done .card-right { color: var(--ok); font-weight: 600; }
+.archive-intro { color: var(--muted); font-size: 15px; line-height: 1.45; margin: 0 0 14px; text-align: center; }
+.archive-note { color: var(--muted); font-size: 13px; margin: -4px 0 14px; text-align: center; }
+.card.day { justify-content: center; }
+.card.day .card-info { font-weight: 600; text-align: center; }
+.card.day.done .card-info small { color: var(--ok); font-weight: 600; }
