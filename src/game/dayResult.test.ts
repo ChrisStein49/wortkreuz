@@ -24,6 +24,6 @@ describe('dayResult', () => {
   it('builds the day share text once all five are solved', () => {
     const r = dayResult(LEVELS, [done(72_000, 0), done(125_000, 1), done(150_000, 0), done(98_000, 0), done(137_000, 1)])
     expect(r.allSolved).toBe(true)
-    expect(UI.shareDay('20.10.', r)).toBe('Wortkreuz 20.10.\n🟩🟩🟨🟨🟥 5/5\n⏱ 9:42 · 💡 2 Tipps')
+    expect(UI.shareDay('20.10.', r)).toBe('Geschnatter 20.10.\n🟩🟩🟨🟨🟥 5/5\n⏱ 9:42 · 💡 2 Tipps')
   })
 })

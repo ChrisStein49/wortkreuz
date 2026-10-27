@@ -9,8 +9,11 @@ export const formatTime = (ms: number) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 }
 
+// App name in one place (working title; the repository is still "wortkreuz")
+const APP_NAME = 'Geschnatter'
+
 export const UI = {
-  appName: 'Wortkreuz',
+  appName: APP_NAME,
   difficulty: { easy: 'leicht', medium: 'mittel', hard: 'schwer' } satisfies Record<Difficulty, string>,
   puzzleOf: (n: number, total: number) => `Rätsel ${n} von ${total}`,
   puzzle: (n: number) => `Rätsel ${n}`,
@@ -32,7 +35,7 @@ export const UI = {
   /** One share per day: a square per puzzle (difficulty), totals of time and hints */
   shareDay: (date: string, r: DayResult) =>
     [
-      `Wortkreuz ${date}`,
+      `${APP_NAME} ${date}`,
       `${r.levels.map((l) => SHARE_SQUARE[l]).join('')} ${r.solved}/${r.total}`,
       `⏱ ${formatTime(r.totalMs)} · 💡 ${r.hints} ${r.hints === 1 ? 'Tipp' : 'Tipps'}`,
     ].join('\n'),
@@ -55,7 +58,7 @@ export const UI = {
   archiveNone: 'noch offen',
   solvedCount: 'gelöst',
   // first-visit card on the overview
-  introTitle: '👋 Neu bei Wortkreuz?',
+  introTitle: `👋 Neu bei ${APP_NAME}?`,
   introText: 'So funktioniert’s.',
   introShow: 'Anleitung ansehen',
   introSkip: 'Überspringen',
