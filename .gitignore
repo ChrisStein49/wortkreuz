@@ -14,3 +14,6 @@ scripts/out/
 !.vscode/extensions.json
 .idea
 .DS_Store
+
+# PNG exports for the newsletter (local only, see export.html)
+exports/

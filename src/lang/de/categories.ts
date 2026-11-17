@@ -8,6 +8,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'country',
     name: 'Land',
+    gender: 'n',
     clue: 'Welches Land ist gesucht?',
     words: [
       'ALBANIEN', 'ALGERIEN', 'ANDORRA', 'ANGOLA', 'ARMENIEN', 'BAHRAIN', 'BARBADOS', 'BELARUS',
@@ -36,6 +37,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'capital',
     name: 'Hauptstadt',
+    gender: 'f',
     clue: 'Welche Hauptstadt ist gesucht?',
     words: [
       'ABUJA', 'ACCRA', 'ALGIER', 'AMMAN', 'AMSTERDAM', 'ANKARA', 'ASTANA', 'ATHEN', 'BAGDAD',
@@ -59,6 +61,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'fruit',
     name: 'Frucht',
+    gender: 'f',
     clue: 'Welche Frucht ist gesucht?',
     words: [
       'ANANAS', 'APFEL', 'APRIKOSE', 'AVOCADO', 'BANANE', 'BIRNE', 'BROMBEERE', 'DATTEL',
@@ -73,6 +76,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'animal',
     name: 'Tier',
+    gender: 'n',
     clue: 'Welches Tier ist gesucht?',
     words: [
       'ADLER', 'AFFE', 'ALPAKA', 'AMEISE', 'AMSEL', 'BIBER', 'BIENE', 'BISON', 'DACHS', 'DELFIN',
@@ -93,6 +97,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'body',
     name: 'Körperteil',
+    gender: 'm',
     clue: 'Welcher Körperteil ist gesucht?',
     words: [
       'ACHSEL', 'ADER', 'ARM', 'AUGE', 'BAUCH', 'BECKEN', 'BEIN', 'BRAUE', 'BRUST', 'DARM',
@@ -109,6 +114,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'vegetable',
     name: 'Gemüse',
+    gender: 'n',
     clue: 'Welches Gemüse ist gesucht?',
     words: [
       'BOHNE', 'BROKKOLI', 'ERBSE', 'FENCHEL', 'GURKE', 'KARFIOL', 'KAROTTE', 'KARTOFFEL', 'KOHL',
@@ -122,6 +128,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'instrument',
     name: 'Musikinstrument',
+    gender: 'n',
     clue: 'Welches Musikinstrument ist gesucht?',
     words: [
       'CELLO', 'GEIGE', 'GITARRE', 'HARFE', 'HORN', 'KLAVIER', 'OBOE', 'ORGEL', 'POSAUNE',
@@ -134,6 +141,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'sport',
     name: 'Sportart',
+    gender: 'f',
     clue: 'Welche Sportart ist gesucht?',
     words: [
       'BADMINTON', 'BASEBALL', 'BIATHLON', 'BILLARD', 'BOWLING', 'BOXEN', 'CRICKET', 'CURLING',
@@ -148,6 +156,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'kitchen',
     name: 'Küchengegenstand',
+    gender: 'm',
     clue: 'Welcher Küchengegenstand ist gesucht?',
     words: [
       'BACKOFEN', 'BECHER', 'DECKEL', 'EIERUHR', 'FLASCHE', 'GABEL', 'GLAS', 'GRILL', 'HERD',
@@ -162,6 +171,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'clothing',
     name: 'Kleidungsstück',
+    gender: 'n',
     clue: 'Welches Kleidungsstück ist gesucht?',
     words: [
       'ANZUG', 'BADEHOSE', 'BIKINI', 'BLAZER', 'BLUSE', 'DIRNDL', 'HANDSCHUH', 'HEMD', 'HOSE',
@@ -177,6 +187,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'plant',
     name: 'Pflanze',
+    gender: 'f',
     clue: 'Welche Pflanze ist gesucht?',
     words: [
       // trees
@@ -198,6 +209,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'planet',
     name: 'Planet',
+    gender: 'm',
     clue: 'Welcher Planet ist gesucht?',
     easy: true,
     words: ['ERDE', 'JUPITER', 'MARS', 'MERKUR', 'NEPTUN', 'SATURN', 'URANUS', 'VENUS'],
@@ -205,6 +217,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'weekday',
     name: 'Wochentag',
+    gender: 'm',
     clue: 'Welcher Wochentag ist gesucht?',
     easy: true,
     words: ['DIENSTAG', 'FREITAG', 'MITTWOCH', 'MONTAG', 'SAMSTAG', 'SONNTAG'],
@@ -212,6 +225,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'month',
     name: 'Monat',
+    gender: 'm',
     clue: 'Welcher Monat ist gesucht?',
     easy: true,
     words: ['APRIL', 'AUGUST', 'DEZEMBER', 'FEBRUAR', 'JANUAR', 'JULI', 'JUNI', 'NOVEMBER', 'OKTOBER'],
@@ -219,6 +233,7 @@ export const CATEGORIES: readonly Category[] = [
   {
     id: 'chess',
     name: 'Schachfigur',
+    gender: 'f',
     clue: 'Welche Schachfigur ist gesucht?',
     easy: true,
     words: ['BAUER', 'DAME', 'SPRINGER', 'TURM'],

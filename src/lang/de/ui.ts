@@ -63,6 +63,8 @@ export const UI = {
   introShow: 'Anleitung ansehen',
   introSkip: 'Überspringen',
   rulesTitle: 'So wird gespielt',
+  /** Solution image: "Gesuchtes Land:", "Gesuchte Hauptstadt:", "Gesuchter Körperteil:" */
+  answerLabel: (name: string, gender: 'm' | 'f' | 'n') => `Gesucht${{ m: 'er', f: 'e', n: 'es' }[gender]} ${name}:`,
   rulesClose: 'Los geht’s',
   rulesGoal: 'Finde die fehlenden Buchstaben und das Lösungswort!',
   rulesText: [

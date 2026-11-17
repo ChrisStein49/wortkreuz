@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { dayIndex, fromIsoDate, puzzlesFor, toIsoDate, type Calendar } from './core/calendar.ts'
+import { parsePuzzleLink } from './core/puzzleLink.ts'
 import { dailyDifficulties, PUZZLES_PER_DAY } from './core/schedule.ts'
 import daily from './data/daily-de.json'
 import { dayResult } from './game/dayResult.ts'
@@ -26,14 +27,33 @@ export default function App() {
   // Fixed for the session; a new day starts on the next app launch
   const [today] = useState(() => new Date())
   const todayIso = toIsoDate(today)
-  // The day being shown: today, or a past day opened from the archive
-  const [viewIso, setViewIso] = useState(todayIso)
+  // A direct link (e.g. from the newsletter: #2026-11-24/2) opens that puzzle
+  const [link] = useState(() => parsePuzzleLink(location.hash, todayIso, calendar.start, PUZZLES_PER_DAY))
+  // The day being shown: today, or a past day opened from the archive or a link
+  const [viewIso, setViewIso] = useState(link?.iso ?? todayIso)
   const isArchive = viewIso !== todayIso
   const viewDate = useMemo(() => fromIsoDate(viewIso), [viewIso])
 
   // Always start on the overview; first-time players get a card there
   // suggesting the instructions (many know the puzzle from the newsletter)
-  const [screen, setScreen] = useState<Screen>({ name: 'overview' })
+  const [screen, setScreen] = useState<Screen>(link ? { name: 'play', index: link.index } : { name: 'overview' })
+
+  // Remove the link from the address bar once followed (a reload then shows
+  // the app as usual), and follow links opened while the app is running
+  useEffect(() => {
+    const clear = () => location.hash && history.replaceState(null, '', location.pathname + location.search)
+    clear()
+    const onHash = () => {
+      const l = parsePuzzleLink(location.hash, todayIso, calendar.start, PUZZLES_PER_DAY)
+      if (l) {
+        setViewIso(l.iso)
+        setScreen({ name: 'play', index: l.index })
+      }
+      clear()
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [todayIso])
   const [showIntro, setShowIntro] = useState(() => !introDone())
   const finishIntro = () => {
     markIntroDone()

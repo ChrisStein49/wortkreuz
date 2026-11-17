@@ -5,6 +5,8 @@ export interface Category {
   id: string
   /** Shown after solving, e.g. "Planet" */
   name: string
+  /** Grammatical gender of `name`, for "Gesuchter/Gesuchte/Gesuchtes …" */
+  gender: 'm' | 'f' | 'n'
   /** Question shown with the solution geese, e.g. "Welches Land ist gesucht?" */
   clue: string
   words: readonly string[]

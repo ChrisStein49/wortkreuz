@@ -1,0 +1,18 @@
+body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f4f4f4; color: #1d1b1a; }
+.exporter { max-width: 1900px; margin: 0 auto; padding: 16px 20px 32px; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+.hint { color: #6b6560; font-size: 13px; margin: 0 0 14px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: flex-end; margin-bottom: 10px; }
+.controls label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; }
+.controls input, .controls select { font: inherit; font-weight: 400; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+.controls button { font: inherit; font-weight: 700; padding: 8px 16px; border: 0; border-radius: 8px; background: #4e2996; color: #fff; cursor: pointer; }
+.controls button:disabled { opacity: .5; cursor: default; }
+.info { font-size: 14px; margin: 0 0 6px; }
+.status { font-size: 14px; margin: 0 0 10px; color: #2e7d32; }
+.previews { display: flex; flex-wrap: wrap; gap: 20px; }
+.previews figure { margin: 0; flex: 1 1 600px; max-width: 930px; }
+.previews canvas { width: 100%; height: auto; display: block; box-shadow: 0 2px 10px rgba(0, 0, 0, .15); }
+.previews figcaption { font-size: 13px; color: #6b6560; margin-top: 6px; }
+.link { font-size: 14px; margin: 0 0 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.link a { color: #4e2996; font-family: ui-monospace, Consolas, monospace; }
+.link button { font: inherit; font-size: 13px; font-weight: 600; padding: 4px 10px; border: 1px solid #4e2996; border-radius: 6px; background: #f4f0fb; color: #4e2996; cursor: pointer; }

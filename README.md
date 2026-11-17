@@ -63,3 +63,24 @@ A static site: `npm run build` produces `dist/`.
 
 Test deployments send `X-Robots-Tag: noindex, nofollow` so search engines
 stay away until the app goes live.
+
+## Newsletter PNGs (local only)
+
+```
+npm run export     # opens http://localhost:5174/export.html
+```
+
+Pick a day and puzzle from the calendar, check the preview, then
+**PNGs speichern** writes `exports/<name> puzzle.png` and
+`exports/<name> solution.png` (930×497, optionally 1860×994; `<name>` is the
+newsletter number if given, else date and puzzle number). The exporter and
+`exports/` exist only on the dev server; the build contains the app alone.
+
+The image frame (background, portrait, name, sizes) is copied from Ganszahlig
+(`goose-numberpuzzles/src/render/image.ts`): change it in both projects. Your
+own portrait as `assets/brand/portrait.png` (or .jpg) replaces the placeholder.
+
+Each puzzle can be linked directly, e.g. for the newsletter:
+`https://…/#2026-11-24/2` opens puzzle 2 of that day (from the archive when the
+day is over; days ahead are not opened). The exporter shows the link for the
+selected puzzle; its base address is `APP_URL` in `src/exporter/Exporter.tsx`.
