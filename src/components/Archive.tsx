@@ -1,4 +1,5 @@
 import { UI } from '../lang/de/ui.ts'
+import { Footer } from './Footer.tsx'
 
 export interface ArchiveDay {
   date: Date
@@ -11,11 +12,12 @@ interface Props {
   days: ArchiveDay[]
   onOpen: (iso: string) => void
   onBack: () => void
+  onRules: () => void
 }
 
 // Deliberately simple: a short list of recent days, no calendar, no stats.
 // It should feel like "missed something? no problem", not like homework.
-export function Archive({ days, onOpen, onBack }: Props) {
+export function Archive({ days, onOpen, onBack, onRules }: Props) {
   return (
     <div className="screen archive">
       <header className="bar centered">
@@ -36,6 +38,8 @@ export function Archive({ days, onOpen, onBack }: Props) {
           </button>
         )
       })}
+      {/* already in the archive, so no "Archiv" link */}
+      <Footer onRules={onRules} onArchive={null} />
     </div>
   )
 }

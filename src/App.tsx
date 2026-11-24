@@ -105,6 +105,7 @@ export default function App() {
       <Archive
         days={archiveDays}
         onBack={backToToday}
+        onRules={() => setScreen({ name: 'rules', back: 'archive' })}
         onOpen={(iso) => {
           setViewIso(iso)
           setScreen({ name: 'overview' })
