@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { fromIsoDate, puzzlesFor, toIsoDate, type Calendar } from '../core/calendar.ts'
 import { puzzleLinkUrl } from '../core/puzzleLink.ts'
+import { PUBLIC_URL } from '../publicUrl.ts'
 import { dailyDifficulties } from '../core/schedule.ts'
 import daily from '../data/daily-de.json'
 import { CATEGORIES } from '../lang/de/index.ts'
@@ -29,12 +30,7 @@ const portraitUrl = Object.entries(PORTRAITS).sort(([a], [b]) => Number(a.includ
 
 const MODES: ImageMode[] = ['puzzle', 'solution']
 
-/**
- * Where the app is published: the base of the newsletter link. Change it once
- * the final address (e.g. https://geschnatter.ganzgraz.at) is live. Links
- * already sent in newsletters keep pointing to the old address.
- */
-const APP_URL = 'https://wortkreuz.netlify.app'
+
 
 export function Exporter() {
   const [iso, setIso] = useState(() => {
@@ -75,7 +71,7 @@ export function Exporter() {
   }, [ready, puzzle, portrait]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const baseName = number.trim() || `${iso} ${index + 1}`
-  const link = puzzleLinkUrl(APP_URL, iso, index)
+  const link = puzzleLinkUrl(PUBLIC_URL, iso, index)
   useEffect(() => setCopied(false), [link])
   const copyLink = async () => {
     await navigator.clipboard.writeText(link)

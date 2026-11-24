@@ -4,7 +4,8 @@
 
 [build.environment]
   NODE_VERSION = "24"
-# Test deployment: keep search engines out until the app goes live
+# Netlify is only the test site (wortkreuz.netlify.app): keep it out of search
+# engines. The official site (geschnatter.ganzgraz.at, Cloudflare) is indexed.
 [[headers]]
   for = "/*"
   [headers.values]
