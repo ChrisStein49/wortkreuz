@@ -6,3 +6,9 @@
  * this only together with a redirect from the old address.
  */
 export const PUBLIC_URL = 'https://geschnatter.ganzgraz.at'
+
+/** ganzgraz main page (footer logo, as in Go Goose's credits). */
+export const GANZGRAZ_URL = 'https://ganzgraz.at/'
+
+/** ganzgraz page that bundles all games and puzzles (footer link). */
+export const MORE_GAMES_URL = `${GANZGRAZ_URL}spiel`

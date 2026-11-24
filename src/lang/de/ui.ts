@@ -47,9 +47,10 @@ export const UI = {
   shareShort: 'Teilen',
   copiedShort: 'Kopiert ✓',
   rules: 'Anleitung',
+  moreGames: 'Mehr Spiele und Rätsel',
   // archive (past days)
-  archive: 'Verpasste Tage',
-  archiveTitle: 'Verpasste Tage',
+  archive: 'Archiv',
+  archiveTitle: 'Archiv',
   archiveIntro: 'Verpasst? Kein Problem – hier kannst du frühere Tage nachspielen.',
   archiveLabel: 'Archiv',
   archiveStreakNote: 'Nachgespielte Rätsel zählen nicht für die Serie.',

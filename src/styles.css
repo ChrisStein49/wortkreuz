@@ -130,7 +130,8 @@ button:disabled { cursor: default; }
 /* day overview */
 .brand-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 6px 0 14px; }
 .brand-goose { width: 44px; height: 50px; flex: none; }
-.brand { font: 400 28px 'Arbutus Slab', Georgia, serif; margin: 0; text-align: center; line-height: 1.15; }
+/* app title as in Go Goose (League Spartan 700) */
+.brand { font: 700 40px 'League Spartan', Inter, system-ui, sans-serif; letter-spacing: -0.5px; color: #2c2a3a; margin: 0; text-align: center; line-height: 1; }
 .date { color: var(--muted); font-size: 14px; text-align: center; }
 .intro-card { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
 .intro-card p { margin: 0 0 10px; font-size: 15px; }
@@ -155,8 +156,13 @@ button:disabled { cursor: default; }
 .dots i.on { background: var(--accent); }
 .card-right { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
 .card-right small { display: block; }
-.links { margin-top: auto; padding-top: 12px; display: flex; gap: 10px; }
-.links button { flex: 1; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 11px; font-weight: 600; font-size: 14px; }
+/* footer: text links as in Ganszahlig, ganzgraz logo as in Go Goose's credits */
+.footer { margin-top: auto; padding-top: 28px; display: flex; align-items: center; justify-content: center; gap: 28px; }
+.footer-text { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.links { display: flex; gap: 18px; justify-content: center; }
+.links button, .more-link { border: 0; background: none; color: var(--accent); text-decoration: underline; padding: 4px; font-size: 15px; }
+.footer-logo { display: block; line-height: 0; }
+.footer-logo img { display: block; width: 96px; height: auto; }
 
 /* rules */
 .rules-geese { display: flex; justify-content: center; gap: 4px; margin: 4px 0 8px; }
