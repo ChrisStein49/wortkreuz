@@ -8,6 +8,7 @@ import { correctWordCells, initialState, reduce, tileLetter, toSaved, type Actio
 import { CATEGORIES } from '../lang/de/index.ts'
 import { formatTime, UI } from '../lang/de/ui.ts'
 import { Board } from './Board.tsx'
+import { Footer } from './Footer.tsx'
 import { gooseColor } from './Goose.tsx'
 import { LetterPicker } from './LetterPicker.tsx'
 import { SolutionArea } from './SolutionArea.tsx'
@@ -27,6 +28,8 @@ interface Props {
   /** Replaying a past day: no sharing (only today's result is shared) */
   archive: boolean
   onBack: () => void
+  onRules: () => void
+  onArchive: () => void
   /** Next unsolved puzzle of the day, or null when the day is complete */
   next: { index: number; open: () => void } | null
   onProgress: () => void
@@ -106,6 +109,7 @@ export function PlayScreen(props: Props) {
           />
         </>
       )}
+      <Footer onRules={props.onRules} onArchive={props.onArchive} />
     </div>
   )
 }

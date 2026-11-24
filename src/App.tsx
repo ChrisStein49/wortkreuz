@@ -21,7 +21,7 @@ type Screen =
   | { name: 'overview' }
   | { name: 'archive' }
   | { name: 'play'; index: number }
-  | { name: 'rules'; back: 'overview' | 'archive' }
+  | { name: 'rules'; back: 'overview' | 'archive' | { play: number } }
 
 export default function App() {
   // Fixed for the session; a new day starts on the next app launch
@@ -91,7 +91,13 @@ export default function App() {
 
   if (screen.name === 'rules') {
     const back = screen.back
-    return <Rules onClose={() => setScreen(back === 'archive' ? { name: 'archive' } : { name: 'overview' })} />
+    return (
+      <Rules
+        onClose={() =>
+          setScreen(back === 'archive' ? { name: 'archive' } : back === 'overview' ? { name: 'overview' } : { name: 'play', index: back.play })
+        }
+      />
+    )
   }
 
   if (screen.name === 'archive') {
@@ -128,6 +134,8 @@ export default function App() {
         todayIso={todayIso}
         archive={isArchive}
         onBack={() => setScreen({ name: 'overview' })}
+        onRules={() => setScreen({ name: 'rules', back: { play: open } })}
+        onArchive={() => setScreen({ name: 'archive' })}
         next={nextIndex === undefined ? null : { index: nextIndex, open: () => setScreen({ name: 'play', index: nextIndex }) }}
         onProgress={() => {
           setVersion((v) => v + 1)
